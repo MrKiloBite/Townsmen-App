@@ -11,7 +11,7 @@ Bu proje, C# ve Avalonia UI kullanılarak küçük Türk işletmeleri ("esnaf") 
 
 ## Teknoloji ve Mimari
 
-- **Platform:** .NET 8
+- **Platform:** .NET 7
 - **Kullanıcı Arayüzü (UI):** Avalonia UI
 - **Veritabanı:** SQLite
 - **Veri Erişimi:** Dapper (Micro ORM) ve Microsoft.Data.Sqlite
@@ -80,7 +80,7 @@ CREATE TABLE ISLEMLER (
 ## Nasıl Çalıştırılır
 
 1. Depoyu klonlayın.
-2. .NET 8 SDK'sının yüklü olduğundan emin olun.
+2. .NET 7 SDK'sının yüklü olduğundan emin olun.
 3. Projenin kök dizininde bir terminal açın ve aşağıdaki komutu çalıştırın:
 
 ```bash
