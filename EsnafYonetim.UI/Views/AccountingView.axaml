@@ -10,22 +10,26 @@
         <TextBlock Text="Muhasebe Kayıtları" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
-            <Button Content="Yeni Gelir Ekle" Classes="accent"/>
-            <Button Content="Yeni Gider Ekle" Classes="accent"/>
+            <Button Content="Yeni İşlem Ekle" Command="{Binding AddNewTransactionCommand}" Classes="accent"/>
+            <Button Content="Seçili İşlemi Düzenle" Command="{Binding EditTransactionCommand}"/>
             <Button Content="Yenile" Command="{Binding LoadTransactionsCommand}"/>
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Transactions}"
+                  SelectedItem="{Binding SelectedTransaction}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   Margin="0,20,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                <DataGridTextColumn Header="İşlem Tipi" Binding="{Binding IslemTipi}" Width="100"/>
-                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="150"/>
-                <DataGridTextColumn Header="Tutar" Binding="{Binding Tutar, StringFormat='C'}" Width="120"/>
-                <DataGridTextColumn Header="İşlem Tarihi" Binding="{Binding IslemTarihi, StringFormat='dd.MM.yyyy'}" Width="120"/>
-                <DataGridTextColumn Header="Ödeme Durumu" Binding="{Binding OdemeDurumu}" Width="120"/>
+                <DataGridTextColumn Header="İşlem Tipi" Binding="{Binding IslemTipi}" Width="90"/>
+                <DataGridTextColumn Header="Ödeme Tipi" Binding="{Binding OdemeTipi}" Width="90"/>
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="120"/>
+                <DataGridTextColumn Header="Brüt Tutar" Binding="{Binding BrutTutar, StringFormat='C'}" Width="100"/>
+                <DataGridTextColumn Header="Net Tutar" Binding="{Binding NetTutar, StringFormat='C'}" Width="100"/>
+                <DataGridTextColumn Header="Genel Toplam" Binding="{Binding GenelToplam, StringFormat='C'}" Width="110"/>
+                <DataGridTextColumn Header="İşlem Tarihi" Binding="{Binding IslemTarihi, StringFormat='dd.MM.yyyy'}" Width="110"/>
+                <DataGridTextColumn Header="Ödeme Durumu" Binding="{Binding OdemeDurumu}" Width="110"/>
                 <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>

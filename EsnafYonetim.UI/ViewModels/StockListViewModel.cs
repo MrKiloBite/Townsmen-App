@@ -15,9 +15,10 @@ namespace EsnafYonetim.UI.ViewModels
         public ObservableCollection<Stok> Stocks { get; } = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(EditStockCommand))]
         private Stok? _selectedStock;
 
-        // Add/Edit işlevselliği için event'ler eklenecek.
+        public event Action<Stok?>? AddOrEditStockRequested;
 
         public StockListViewModel()
         {
@@ -35,5 +36,19 @@ namespace EsnafYonetim.UI.ViewModels
                 Stocks.Add(stock);
             }
         }
+
+        [RelayCommand]
+        private void AddNewStock()
+        {
+            AddOrEditStockRequested?.Invoke(null);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanEditStock))]
+        private void EditStock()
+        {
+            AddOrEditStockRequested?.Invoke(SelectedStock);
+        }
+
+        private bool CanEditStock() => SelectedStock != null;
     }
 }

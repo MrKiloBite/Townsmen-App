@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="700"
+             x:Class="EsnafYonetim.UI.Views.AccountingAddEditView"
+             x:DataType="vm:AccountingAddEditViewModel">
+    <Border Padding="25" CornerRadius="10">
+        <ScrollViewer>
+            <StackPanel Spacing="10">
+                <TextBlock Text="Muhasebe İşlemi Ekle / Düzenle" FontSize="22" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                <TextBlock Text="İşlem Tipi:"/>
+                <ComboBox SelectedItem="{Binding Transaction.IslemTipi}">
+                    <ComboBoxItem>Gelir</ComboBoxItem>
+                    <ComboBoxItem>Gider</ComboBoxItem>
+                </ComboBox>
+
+                <TextBlock Text="Ödeme Tipi:" Margin="0,5,0,0"/>
+                <ComboBox SelectedItem="{Binding Transaction.OdemeTipi}">
+                    <ComboBoxItem>Nakit</ComboBoxItem>
+                    <ComboBoxItem>POS</ComboBoxItem>
+                    <ComboBoxItem>Havale</ComboBoxItem>
+                    <ComboBoxItem>Borç</ComboBoxItem>
+                </ComboBox>
+
+                <TextBlock Text="Kategori:" Margin="0,5,0,0"/>
+                <TextBox Text="{Binding Transaction.Kategori}"/>
+
+                <TextBlock Text="Brüt Tutar:" Margin="0,5,0,0"/>
+                <NumericUpDown Value="{Binding Transaction.BrutTutar}" FormatString="C2"/>
+
+                <TextBlock Text="Ödeme Durumu:" Margin="0,5,0,0"/>
+                <ComboBox SelectedItem="{Binding Transaction.OdemeDurumu}">
+                    <ComboBoxItem>Ödendi</ComboBoxItem>
+                    <ComboBoxItem>Ödenmedi</ComboBoxItem>
+                    <ComboBoxItem>Kısmi Ödendi</ComboBoxItem>
+                </ComboBox>
+
+                <TextBlock Text="İşlem Tarihi:" Margin="0,5,0,0"/>
+                <DatePicker SelectedDate="{Binding Transaction.IslemTarihi}"/>
+
+                <TextBlock Text="Açıklama:" Margin="0,5,0,0"/>
+                <TextBox Text="{Binding Transaction.Aciklama}" TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
+
+                <!-- Tutar Özeti -->
+                <Border Classes="summary" Margin="0,20,0,0" Padding="15" BorderThickness="1" BorderBrush="LightGray" CornerRadius="5">
+                    <StackPanel Spacing="5">
+                        <TextBlock>
+                            <Run Text="KDV Tutarı"/>
+                            <Run Text="{Binding Transaction.UygulananKDVOrani, StringFormat='(%{0:P0})'}" Foreground="Gray"/>
+                            <Run Text=":"/>
+                            <Run Text="{Binding Transaction.KDV_Tutari, StringFormat=' {0:C2}'}" FontWeight="Bold"/>
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Komisyon Tutarı"/>
+                            <Run Text="{Binding Transaction.UygulananKomisyonOrani, StringFormat='(%{0:P1})'}" Foreground="Gray"/>
+                            <Run Text=":"/>
+                            <Run Text="{Binding Transaction.KomisyonTutari, StringFormat=' {0:C2}'}" FontWeight="Bold"/>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Transaction.NetTutar, StringFormat='Net Tutar: {0:C2}'}" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                        <TextBlock Text="{Binding Transaction.GenelToplam, StringFormat='Genel Toplam: {0:C2}'}" FontSize="16" FontWeight="ExtraBold" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,25,0,0">
+                    <Button Content="Kaydet" Command="{Binding SaveCommand}" Classes="accent"/>
+                    <Button Content="İptal" Command="{Binding CancelCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

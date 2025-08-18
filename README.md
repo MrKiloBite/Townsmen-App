@@ -4,10 +4,16 @@ Bu proje, C# ve Avalonia UI kullanılarak küçük Türk işletmeleri ("esnaf") 
 
 ## Özellikler
 
-- **Müşteri Yönetimi:** Müşteri profillerini oluşturun, düzenleyin ve yönetin.
-- **Stok Yönetimi:** Envanterinizi takip edin, ürün ekleyin ve güncelleyin.
-- **Muhasebe Yönetimi:** Gelir ve giderlerinizi kaydederek finansal durumunuzu takip edin.
-- **Gelecek Özellikler:** Veritabanı yedekleme/geri yükleme ve basit raporlama gibi özellikler planlanmaktadır.
+- **Tam Kapsamlı Modül Yönetimi:** Müşteriler, Stoklar ve Muhasebe modülleri için tam CRUD (Oluştur, Oku, Güncelle, Sil) işlevselliği.
+- **Gelişmiş Muhasebe:**
+  - Harici bir `config.txt` dosyasından okunan KDV ve POS komisyon oranları.
+  - Her işlem için ödeme tipi (Nakit, POS, Havale, Borç) takibi.
+  - İşlem anındaki oranların kaydedilmesiyle geçmişe dönük veri tutarlılığı.
+  - Net kâr, KDV tutarı gibi hesaplanmış değerlerin gösterimi.
+- **Ayarlar Modülü:**
+  - Açık ve Koyu tema arasında geçiş yapabilme.
+  - Finansal oranları (`config.txt` üzerinden) uygulama içinden yönetme.
+- **Bildirimler Modülü (Altyapı):** Zamanlanmış ve koşullu bildirimler için temel altyapı ve arayüz oluşturulmuştur.
 
 ## Teknoloji ve Mimari
 
@@ -18,13 +24,13 @@ Bu proje, C# ve Avalonia UI kullanılarak küçük Türk işletmeleri ("esnaf") 
 
 Proje, bakımı ve genişletilebilirliği kolaylaştırmak için n-katmanlı bir mimari kullanır:
 - **EsnafYonetim.UI:** Kullanıcı arayüzü (View ve ViewModel'ler).
-- **EsnafYonetim.BLL:** İş mantığı katmanı (Manager sınıfları).
+- **EsnafYonetim.BLL:** İş mantığı katmanı (Manager ve Service sınıfları).
 - **EsnafYonetim.DAL:** Veri erişim katmanı (Repository'ler ve veritabanı hizmeti).
 - **EsnafYonetim.Core:** Temel veri modelleri (POCO sınıfları).
 
 ## Veritabanı Yapısı
 
-Uygulama, ilk çalıştırmada `EsnafYonetim.db` adında bir SQLite veritabanı dosyası oluşturur. Temel tabloların yapısı aşağıdadır:
+Uygulama, ilk çalıştırmada `Data/EsnafYonetim.db` adında bir SQLite veritabanı dosyası oluşturur. Temel tabloların yapısı aşağıdadır:
 
 ```sql
 CREATE TABLE MUSTERI (
@@ -56,7 +62,10 @@ CREATE TABLE MUHASEBE (
     MusteriId INTEGER,
     IslemTipi TEXT NOT NULL,
     Kategori TEXT,
-    Tutar REAL NOT NULL,
+    BrutTutar REAL NOT NULL,
+    OdemeTipi TEXT NOT NULL,
+    UygulananKDVOrani REAL NOT NULL,
+    UygulananKomisyonOrani REAL NOT NULL,
     IslemTarihi TEXT NOT NULL,
     VadeTarihi TEXT,
     OdemeDurumu TEXT NOT NULL,
@@ -64,16 +73,17 @@ CREATE TABLE MUHASEBE (
     FOREIGN KEY (MusteriId) REFERENCES MUSTERI(Id)
 );
 
-CREATE TABLE ISLEMLER (
+CREATE TABLE BILDIRIMLER (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    MusteriId INTEGER NOT NULL,
-    MuhasebeId INTEGER NOT NULL,
-    IslemTipi TEXT NOT NULL,
-    IslemTarihi TEXT NOT NULL,
-    ToplamTutar REAL NOT NULL,
-    Aciklama TEXT,
-    FOREIGN KEY (MusteriId) REFERENCES MUSTERI(Id),
-    FOREIGN KEY (MuhasebeId) REFERENCES MUHASEBE(Id)
+    Aktif INTEGER NOT NULL,
+    Mesaj TEXT NOT NULL,
+    Tip INTEGER NOT NULL,
+    TetiklenmeZamani TEXT,
+    HedefId INTEGER,
+    Operator INTEGER NOT NULL,
+    Deger REAL NOT NULL,
+    SesDosyasiYolu TEXT,
+    OlusturmaTarihi TEXT NOT NULL
 );
 ```
 

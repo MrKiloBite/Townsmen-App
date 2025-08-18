@@ -31,8 +31,8 @@ namespace EsnafYonetim.DAL.Repositories
         {
             using var connection = _databaseService.GetConnection();
             var sql = @"
-                INSERT INTO MUHASEBE (MusteriId, IslemTipi, Kategori, Tutar, IslemTarihi, VadeTarihi, OdemeDurumu, Aciklama)
-                VALUES (@MusteriId, @IslemTipi, @Kategori, @Tutar, @IslemTarihi, @VadeTarihi, @OdemeDurumu, @Aciklama);
+                INSERT INTO MUHASEBE (MusteriId, IslemTipi, Kategori, BrutTutar, OdemeTipi, UygulananKDVOrani, UygulananKomisyonOrani, IslemTarihi, VadeTarihi, OdemeDurumu, Aciklama)
+                VALUES (@MusteriId, @IslemTipi, @Kategori, @BrutTutar, @OdemeTipi, @UygulananKDVOrani, @UygulananKomisyonOrani, @IslemTarihi, @VadeTarihi, @OdemeDurumu, @Aciklama);
                 SELECT last_insert_rowid();";
             return await connection.ExecuteScalarAsync<int>(sql, transaction);
         }
@@ -45,7 +45,10 @@ namespace EsnafYonetim.DAL.Repositories
                     MusteriId = @MusteriId,
                     IslemTipi = @IslemTipi,
                     Kategori = @Kategori,
-                    Tutar = @Tutar,
+                    BrutTutar = @BrutTutar,
+                    OdemeTipi = @OdemeTipi,
+                    UygulananKDVOrani = @UygulananKDVOrani,
+                    UygulananKomisyonOrani = @UygulananKomisyonOrani,
                     IslemTarihi = @IslemTarihi,
                     VadeTarihi = @VadeTarihi,
                     OdemeDurumu = @OdemeDurumu,

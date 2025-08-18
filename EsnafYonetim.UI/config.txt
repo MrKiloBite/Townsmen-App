@@ -1,3 +1,13 @@
 # Esnaf Yönetim Sistemi - Yapılandırma Dosyası
+
 # Abonelik doğrulaması için kullanılacak kullanıcı adı.
 username=kullanici_adi_buraya_yazilacak
+
+# --- Gelişmiş Muhasebe Ayarları ---
+# Ondalık ayırıcı olarak nokta (.) kullanın.
+
+# KDV Oranı (örn: 0.20 for %20)
+kdv_orani=0.20
+
+# POS Cihazı Komisyon Oranı (örn: 0.015 for %1.5)
+pos_komisyon_orani=0.015

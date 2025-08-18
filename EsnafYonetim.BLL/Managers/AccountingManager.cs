@@ -40,13 +40,13 @@ namespace EsnafYonetim.BLL.Managers
         public async Task<decimal> GetTotalRevenueAsync()
         {
             var transactions = await _accountingRepository.GetAllAsync();
-            return transactions.Where(t => t.IslemTipi == "Gelir").Sum(t => t.Tutar);
+            return transactions.Where(t => t.IslemTipi == "Gelir").Sum(t => t.BrutTutar);
         }
 
         public async Task<decimal> GetTotalExpensesAsync()
         {
             var transactions = await _accountingRepository.GetAllAsync();
-            return transactions.Where(t => t.IslemTipi == "Gider").Sum(t => t.Tutar);
+            return transactions.Where(t => t.IslemTipi == "Gider").Sum(t => t.BrutTutar);
         }
     }
 }

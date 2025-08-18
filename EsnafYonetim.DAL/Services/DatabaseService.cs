@@ -24,9 +24,16 @@ namespace EsnafYonetim.DAL.Services
 
         public void InitializeDatabase()
         {
+            // Geliştirme aşamasında şema değişikliklerini kolaylaştırmak için
+            // veritabanını her başlangıçta silip yeniden oluşturuyoruz.
+            // TODO: Üretime geçmeden önce bu satırı kaldır ve bir migration sistemi kullan.
             if (File.Exists(_databasePath))
             {
-                // Veritabanı zaten var, bir şey yapma.
+                File.Delete(_databasePath);
+            }
+
+            if (File.Exists(_databasePath))
+            {
                 return;
             }
 
@@ -68,7 +75,10 @@ namespace EsnafYonetim.DAL.Services
                 MusteriId INTEGER,
                 IslemTipi TEXT NOT NULL,
                 Kategori TEXT,
-                Tutar REAL NOT NULL,
+                BrutTutar REAL NOT NULL,
+                OdemeTipi TEXT NOT NULL,
+                UygulananKDVOrani REAL NOT NULL,
+                UygulananKomisyonOrani REAL NOT NULL,
                 IslemTarihi TEXT NOT NULL,
                 VadeTarihi TEXT,
                 OdemeDurumu TEXT NOT NULL,
@@ -88,6 +98,21 @@ namespace EsnafYonetim.DAL.Services
                 Aciklama TEXT,
                 FOREIGN KEY (MusteriId) REFERENCES MUSTERI(Id),
                 FOREIGN KEY (MuhasebeId) REFERENCES MUHASEBE(Id)
+            );");
+
+            // BILDIRIMLER Tablosu
+            connection.Execute(@"
+            CREATE TABLE BILDIRIMLER (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Aktif INTEGER NOT NULL,
+                Mesaj TEXT NOT NULL,
+                Tip INTEGER NOT NULL,
+                TetiklenmeZamani TEXT,
+                HedefId INTEGER,
+                Operator INTEGER NOT NULL,
+                Deger REAL NOT NULL,
+                SesDosyasiYolu TEXT,
+                OlusturmaTarihi TEXT NOT NULL
             );");
         }
     }

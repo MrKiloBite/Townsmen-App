@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+             x:Class="EsnafYonetim.UI.Views.StockAddEditView"
+             x:DataType="vm:StockAddEditViewModel">
+    <StackPanel Spacing="10" Margin="20">
+        <TextBlock Text="Stok Ürünü Ekle / Düzenle" FontSize="22" FontWeight="Bold"/>
+
+        <TextBlock Text="Ürün Adı:"/>
+        <TextBox Text="{Binding Stock.UrunAdi}"/>
+
+        <TextBlock Text="Miktar:"/>
+        <NumericUpDown Value="{Binding Stock.Miktar}"/>
+
+        <TextBlock Text="Alış Fiyatı:"/>
+        <NumericUpDown Value="{Binding Stock.AlisFiyati}" FormatString="C2"/>
+
+        <TextBlock Text="Satış Fiyatı:"/>
+        <NumericUpDown Value="{Binding Stock.SatisFiyati}" FormatString="C2"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">
+            <Button Content="Kaydet" Command="{Binding SaveCommand}" Classes="accent"/>
+            <Button Content="İptal" Command="{Binding CancelCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -10,8 +10,8 @@
         <TextBlock Text="Stok Yönetimi" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
-            <Button Content="Yeni Ürün Ekle" Classes="accent"/>
-            <Button Content="Seçili Ürünü Düzenle"/>
+            <Button Content="Yeni Ürün Ekle" Command="{Binding AddNewStockCommand}" Classes="accent"/>
+            <Button Content="Seçili Ürünü Düzenle" Command="{Binding EditStockCommand}"/>
             <Button Content="Yenile" Command="{Binding LoadStocksCommand}"/>
         </StackPanel>
 

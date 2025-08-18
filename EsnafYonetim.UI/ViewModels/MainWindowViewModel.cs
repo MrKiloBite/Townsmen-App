@@ -13,6 +13,8 @@ namespace EsnafYonetim.UI.ViewModels
         private readonly CustomerListViewModel _customerListViewModel;
         private readonly StockListViewModel _stockListViewModel;
         private readonly AccountingViewModel _accountingViewModel;
+        private readonly SettingsViewModel _settingsViewModel;
+        private readonly BildirimlerViewModel _bildirimlerViewModel;
 
         public MainWindowViewModel()
         {
@@ -20,25 +22,60 @@ namespace EsnafYonetim.UI.ViewModels
             _customerListViewModel = new CustomerListViewModel();
             _stockListViewModel = new StockListViewModel();
             _accountingViewModel = new AccountingViewModel();
+            _settingsViewModel = new SettingsViewModel();
+            _bildirimlerViewModel = new BildirimlerViewModel();
 
+            // Navigasyon event'lerine abone ol
             _customerListViewModel.AddOrEditCustomerRequested += OnAddOrEditCustomerRequested;
+            _stockListViewModel.AddOrEditStockRequested += OnAddOrEditStockRequested;
+            _accountingViewModel.AddOrEditTransactionRequested += OnAddOrEditTransactionRequested;
 
             _content = _dashboardViewModel;
         }
 
+        // --- Müşteri Navigasyonu ---
         private void OnAddOrEditCustomerRequested(Musteri? customer)
         {
-            var addEditVm = new CustomerAddEditViewModel(customer);
-            addEditVm.OnRequestClose += OnAddEditViewRequestClose;
-            Content = addEditVm;
+            var vm = new CustomerAddEditViewModel(customer);
+            vm.OnRequestClose += OnCustomerAddEditViewRequestClose;
+            Content = vm;
         }
 
-        private void OnAddEditViewRequestClose()
+        private void OnCustomerAddEditViewRequestClose()
         {
             Content = _customerListViewModel;
             _customerListViewModel.LoadCustomersCommand.Execute(null);
         }
 
+        // --- Stok Navigasyonu ---
+        private void OnAddOrEditStockRequested(Stok? stock)
+        {
+            var vm = new StockAddEditViewModel(stock);
+            vm.OnRequestClose += OnStockAddEditViewRequestClose;
+            Content = vm;
+        }
+
+        private void OnStockAddEditViewRequestClose()
+        {
+            Content = _stockListViewModel;
+            _stockListViewModel.LoadStocksCommand.Execute(null);
+        }
+
+        // --- Muhasebe Navigasyonu ---
+        private void OnAddOrEditTransactionRequested(Muhasebe? transaction)
+        {
+            var vm = new AccountingAddEditViewModel(transaction);
+            vm.OnRequestClose += OnAccountingAddEditViewRequestClose;
+            Content = vm;
+        }
+
+        private void OnAccountingAddEditViewRequestClose()
+        {
+            Content = _accountingViewModel;
+            _accountingViewModel.LoadTransactionsCommand.Execute(null);
+        }
+
+        // --- Ana Menü Komutları ---
         [RelayCommand]
         private void ShowDashboard()
         {
@@ -61,6 +98,18 @@ namespace EsnafYonetim.UI.ViewModels
         private void ShowAccounting()
         {
             Content = _accountingViewModel;
+        }
+
+        [RelayCommand]
+        private void ShowBildirimler()
+        {
+            Content = _bildirimlerViewModel;
+        }
+
+        [RelayCommand]
+        private void ShowSettings()
+        {
+            Content = _settingsViewModel;
         }
     }
 }

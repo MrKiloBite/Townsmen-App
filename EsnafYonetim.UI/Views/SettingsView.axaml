@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EsnafYonetim.UI.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+    <Border Padding="25" CornerRadius="10">
+        <StackPanel Spacing="15" MaxWidth="500">
+            <TextBlock Text="Uygulama Ayarları" FontSize="22" FontWeight="Bold"/>
+
+            <TextBlock Text="Görünüm Ayarları" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"/>
+            <Border Padding="15" CornerRadius="5" BorderThickness="1" BorderBrush="LightGray">
+                <ToggleSwitch IsChecked="{Binding IsDarkMode}" OnContent="Koyu Tema" OffContent="Açık Tema"/>
+            </Border>
+
+            <TextBlock Text="Finansal Ayarlar" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"/>
+            <Border Padding="15" CornerRadius="5" BorderThickness="1" BorderBrush="LightGray">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Varsayılan KDV Oranı:"/>
+                    <NumericUpDown Value="{Binding KdvRate}" FormatString="P0" Increment="0.01"/>
+
+                    <TextBlock Text="Varsayılan POS Komisyonu:" Margin="0,10,0,0"/>
+                    <NumericUpDown Value="{Binding PosCommissionRate}" FormatString="P2" Increment="0.001"/>
+                </StackPanel>
+            </Border>
+
+            <Button Content="Ayarları Kaydet"
+                    Command="{Binding SaveSettingsCommand}"
+                    Classes="accent"
+                    HorizontalAlignment="Left"
+                    Margin="0,30,0,0"/>
+        </StackPanel>
+    </Border>
+</UserControl>

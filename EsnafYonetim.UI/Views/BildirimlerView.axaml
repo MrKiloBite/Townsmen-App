@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EsnafYonetim.UI.Views.BildirimlerView"
+             x:DataType="vm:BildirimlerViewModel">
+    <DockPanel Margin="15">
+        <TextBlock Text="Bildirimler ve Uyarılar" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+            <Button Content="Yeni Bildirim Ekle" Command="{Binding AddNewNotificationCommand}" Classes="accent"/>
+            <Button Content="Yenile" Command="{Binding LoadNotificationsCommand}"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Notifications}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="0,20,0,0">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Aktif" Binding="{Binding Aktif}"/>
+                <DataGridTextColumn Header="Mesaj" Binding="{Binding Mesaj}" Width="*"/>
+                <DataGridTextColumn Header="Tip" Binding="{Binding Tip}"/>
+                <DataGridTextColumn Header="Tetiklenme Zamanı" Binding="{Binding TetiklenmeZamani, StringFormat='g'}"/>
+                <DataGridTextColumn Header="Koşul" Binding="{Binding HedefId}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

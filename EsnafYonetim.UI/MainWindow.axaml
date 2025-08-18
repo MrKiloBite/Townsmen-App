@@ -16,6 +16,10 @@
         <DataTemplate DataType="{x:Type vm:CustomerAddEditViewModel}"><views:CustomerAddEditView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:StockListViewModel}"><views:StockListView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:AccountingViewModel}"><views:AccountingView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StockAddEditViewModel}"><views:StockAddEditView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AccountingAddEditViewModel}"><views:AccountingAddEditView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BildirimlerViewModel}"><views:BildirimlerView/></DataTemplate>
     </Window.DataTemplates>
 
     <DockPanel>
@@ -25,6 +29,8 @@
             <Button Content="Müşteriler" Command="{Binding ShowCustomersCommand}" Classes="navButton"/>
             <Button Content="Stoklar" Command="{Binding ShowStockCommand}" Classes="navButton"/>
             <Button Content="Muhasebe" Command="{Binding ShowAccountingCommand}" Classes="navButton"/>
+            <Button Content="Bildirimler" Command="{Binding ShowBildirimlerCommand}" Classes="navButton"/>
+            <Button Content="Ayarlar" Command="{Binding ShowSettingsCommand}" Classes="navButton"/>
             <!-- Diğer menü öğeleri buraya eklenecek -->
         </StackPanel>
 
