@@ -1,0 +1,3 @@
+# Esnaf Yönetim Sistemi - Yapılandırma Dosyası
+# Abonelik doğrulaması için kullanılacak kullanıcı adı.
+username=kullanici_adi_buraya_yazilacak

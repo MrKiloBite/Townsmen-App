@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="EsnafYonetim.UI.Views.CustomerListView"
+             x:DataType="vm:CustomerListViewModel">
+    <DockPanel Margin="15">
+        <TextBlock Text="Müşteri Yönetimi" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+            <Button Content="Yeni Müşteri Ekle" Command="{Binding AddNewCustomerCommand}" Classes="accent"/>
+            <Button Content="Seçili Müşteriyi Düzenle" Command="{Binding EditCustomerCommand}"/>
+            <Button Content="Yenile" Command="{Binding LoadCustomersCommand}"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Customers}"
+                  SelectedItem="{Binding SelectedCustomer}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserSortColumns="True"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="Gray"
+                  Margin="0,20,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Ad Soyad" Binding="{Binding AdSoyad}" Width="*"/>
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="150"/>
+                <DataGridTextColumn Header="E-posta" Binding="{Binding Eposta}" Width="200"/>
+                <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="100"/>
+                <DataGridTextColumn Header="Kayıt Tarihi" Binding="{Binding OlusturmaTarihi, StringFormat='dd.MM.yyyy'}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

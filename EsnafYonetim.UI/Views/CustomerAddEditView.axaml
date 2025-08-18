@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="700"
+             x:Class="EsnafYonetim.UI.Views.CustomerAddEditView"
+             x:DataType="vm:CustomerAddEditViewModel">
+    <Border Padding="25" CornerRadius="10">
+        <StackPanel Spacing="15">
+            <TextBlock Text="Müşteri Ekle / Düzenle" FontSize="22" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="15">
+                <TextBlock Text="Ad Soyad:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Customer.AdSoyad}" Grid.Row="0" Grid.Column="1"/>
+
+                <TextBlock Text="Telefon:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Customer.Telefon}" Grid.Row="1" Grid.Column="1"/>
+
+                <TextBlock Text="E-posta:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Customer.Eposta}" Grid.Row="2" Grid.Column="1"/>
+
+                <TextBlock Text="Durum:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                <ComboBox SelectedItem="{Binding Customer.Status}" Grid.Row="3" Grid.Column="1">
+                    <ComboBoxItem>active</ComboBoxItem>
+                    <ComboBoxItem>archived</ComboBoxItem>
+                    <ComboBoxItem>deleted</ComboBoxItem>
+                </ComboBox>
+
+                <TextBlock Text="Adres:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Top"/>
+                <TextBox Text="{Binding Customer.Adres}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="4" Grid.Column="1"/>
+
+                <TextBlock Text="Notlar:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Top"/>
+                <TextBox Text="{Binding Customer.Notlar}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="5" Grid.Column="1"/>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,25,0,0">
+                <Button Content="Kaydet" Command="{Binding SaveCommand}" Classes="accent"/>
+                <Button Content="İptal" Command="{Binding CancelCommand}"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

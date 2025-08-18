@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+        xmlns:views="using:EsnafYonetim.UI.Views"
+        x:Class="EsnafYonetim.UI.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Esnaf Yönetim Sistemi" Width="1200" Height="720" WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.DataTemplates>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}"><views:DashboardView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CustomerListViewModel}"><views:CustomerListView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CustomerAddEditViewModel}"><views:CustomerAddEditView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StockListViewModel}"><views:StockListView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AccountingViewModel}"><views:AccountingView/></DataTemplate>
+    </Window.DataTemplates>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left" Width="220" Background="#2E3338" Spacing="5">
+            <TextBlock Text="ESNAF YÖNETİM" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="20"/>
+            <Button Content="Gösterge Paneli" Command="{Binding ShowDashboardCommand}" Classes="navButton"/>
+            <Button Content="Müşteriler" Command="{Binding ShowCustomersCommand}" Classes="navButton"/>
+            <Button Content="Stoklar" Command="{Binding ShowStockCommand}" Classes="navButton"/>
+            <Button Content="Muhasebe" Command="{Binding ShowAccountingCommand}" Classes="navButton"/>
+            <!-- Diğer menü öğeleri buraya eklenecek -->
+        </StackPanel>
+
+        <Border CornerRadius="10" Background="#F0F2F5" Margin="10">
+            <ContentControl Content="{Binding Content}" Margin="15"/>
+        </Border>
+    </DockPanel>
+
+    <Window.Styles>
+        <Style Selector="Button.navButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#A9B1B8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="10,5"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.navButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3A4047"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.navButton:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#4B5157"/>
+        </Style>
+    </Window.Styles>
+
+</Window>

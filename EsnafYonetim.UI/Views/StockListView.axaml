@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="EsnafYonetim.UI.Views.StockListView"
+             x:DataType="vm:StockListViewModel">
+    <DockPanel Margin="15">
+        <TextBlock Text="Stok Yönetimi" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+            <Button Content="Yeni Ürün Ekle" Classes="accent"/>
+            <Button Content="Seçili Ürünü Düzenle"/>
+            <Button Content="Yenile" Command="{Binding LoadStocksCommand}"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Stocks}"
+                  SelectedItem="{Binding SelectedStock}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserSortColumns="True"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="Gray"
+                  Margin="0,20,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" Width="120"/>
+                <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" Width="*"/>
+                <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="80"/>
+                <DataGridTextColumn Header="Birim" Binding="{Binding Birim}" Width="80"/>
+                <DataGridTextColumn Header="Alış Fiyatı" Binding="{Binding AlisFiyati, StringFormat='C'}" Width="120"/>
+                <DataGridTextColumn Header="Satış Fiyatı" Binding="{Binding SatisFiyati, StringFormat='C'}" Width="120"/>
+                <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding EklenmeTarihi, StringFormat='dd.MM.yyyy'}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

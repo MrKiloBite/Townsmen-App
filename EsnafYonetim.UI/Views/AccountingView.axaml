@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EsnafYonetim.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="EsnafYonetim.UI.Views.AccountingView"
+             x:DataType="vm:AccountingViewModel">
+    <DockPanel Margin="15">
+        <TextBlock Text="Muhasebe Kayıtları" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+            <Button Content="Yeni Gelir Ekle" Classes="accent"/>
+            <Button Content="Yeni Gider Ekle" Classes="accent"/>
+            <Button Content="Yenile" Command="{Binding LoadTransactionsCommand}"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Transactions}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="0,20,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="İşlem Tipi" Binding="{Binding IslemTipi}" Width="100"/>
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="150"/>
+                <DataGridTextColumn Header="Tutar" Binding="{Binding Tutar, StringFormat='C'}" Width="120"/>
+                <DataGridTextColumn Header="İşlem Tarihi" Binding="{Binding IslemTarihi, StringFormat='dd.MM.yyyy'}" Width="120"/>
+                <DataGridTextColumn Header="Ödeme Durumu" Binding="{Binding OdemeDurumu}" Width="120"/>
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>
