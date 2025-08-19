@@ -1,6 +1,8 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -11,6 +13,11 @@ namespace EsnafYonetim.UI.ViewModels
         private readonly BildirimManager _bildirimManager;
 
         public ObservableCollection<Bildirim> Notifications { get; } = new();
+
+        [ObservableProperty]
+        private Bildirim? _selectedNotification;
+
+        public event Action<Bildirim?>? AddOrEditNotificationRequested;
 
         public BildirimlerViewModel()
         {
@@ -32,7 +39,9 @@ namespace EsnafYonetim.UI.ViewModels
         [RelayCommand]
         private void AddNewNotification()
         {
-            // TODO: Navigate to an Add/Edit view for notifications.
+            AddOrEditNotificationRequested?.Invoke(null);
         }
+
+        // TODO: Add Edit and Delete commands
     }
 }

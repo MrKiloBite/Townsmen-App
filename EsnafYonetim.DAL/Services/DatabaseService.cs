@@ -24,16 +24,9 @@ namespace EsnafYonetim.DAL.Services
 
         public void InitializeDatabase()
         {
-            // Geliştirme aşamasında şema değişikliklerini kolaylaştırmak için
-            // veritabanını her başlangıçta silip yeniden oluşturuyoruz.
-            // TODO: Üretime geçmeden önce bu satırı kaldır ve bir migration sistemi kullan.
             if (File.Exists(_databasePath))
             {
-                File.Delete(_databasePath);
-            }
-
-            if (File.Exists(_databasePath))
-            {
+                // Veritabanı zaten var, bir şey yapma.
                 return;
             }
 

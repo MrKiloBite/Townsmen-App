@@ -26,6 +26,8 @@
                 <DataGridTextColumn Header="Ödeme Tipi" Binding="{Binding OdemeTipi}" Width="90"/>
                 <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="120"/>
                 <DataGridTextColumn Header="Brüt Tutar" Binding="{Binding BrutTutar, StringFormat='C'}" Width="100"/>
+                <DataGridTextColumn Header="KDV Oranı" Binding="{Binding UygulananKDVOrani, StringFormat=P0}" Width="90"/>
+                <DataGridTextColumn Header="KDV Tutarı" Binding="{Binding KDV_Tutari, StringFormat=C2}" Width="90"/>
                 <DataGridTextColumn Header="Net Tutar" Binding="{Binding NetTutar, StringFormat='C'}" Width="100"/>
                 <DataGridTextColumn Header="Genel Toplam" Binding="{Binding GenelToplam, StringFormat='C'}" Width="110"/>
                 <DataGridTextColumn Header="İşlem Tarihi" Binding="{Binding IslemTarihi, StringFormat='dd.MM.yyyy'}" Width="110"/>

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace EsnafYonetim.UI.ViewModels
 {
@@ -25,25 +26,34 @@ namespace EsnafYonetim.UI.ViewModels
         [ObservableProperty]
         private bool _isDarkMode;
 
+        [ObservableProperty]
+        private string? _confirmationMessage;
+
+        [ObservableProperty]
+        private bool _isConfirmationVisible;
+
+        public ICommand SaveSettingsCommand { get; }
+
+        partial void OnIsDarkModeChanged(bool value)
+        {
+            Application.Current!.RequestedThemeVariant = value ? ThemeVariant.Dark : ThemeVariant.Light;
+        }
+
         public SettingsViewModel()
         {
             _settingsService = new SettingsService();
             KdvRate = _settingsService.KDVRate;
             PosCommissionRate = _settingsService.POSCommissionRate;
             IsDarkMode = Application.Current!.RequestedThemeVariant == ThemeVariant.Dark;
+
+            SaveSettingsCommand = new AsyncRelayCommand(SaveSettingsAsync);
         }
 
-        [RelayCommand]
-        private void SaveSettings()
+        private async Task SaveSettingsAsync()
         {
-            // Update theme
-            Application.Current!.RequestedThemeVariant = IsDarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
-
-            // Update config file
             var configPath = Path.Combine(AppContext.BaseDirectory, "config.txt");
 
-            // Read all lines, update the ones we care about, or add them if they don't exist
-            var settings = new Dictionary<string, string>();
+            var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (File.Exists(configPath))
             {
                 var lines = File.ReadAllLines(configPath);
@@ -56,16 +66,13 @@ namespace EsnafYonetim.UI.ViewModels
             settings["kdv_orani"] = KdvRate.ToString(CultureInfo.InvariantCulture);
             settings["pos_komisyon_orani"] = PosCommissionRate.ToString(CultureInfo.InvariantCulture);
 
-            // Re-write the file preserving comments etc. is hard.
-            // For now, we just write the key-value pairs we manage.
-            // A more robust solution would parse and reconstruct the file.
             var newLines = settings.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
-
-            // This is a simplification and will lose comments.
-            // TODO: Implement a more robust config file writer.
             File.WriteAllLines(configPath, newLines);
 
-            // Optionally, notify the user that settings are saved.
+            ConfirmationMessage = "Ayarlar başarıyla kaydedildi!";
+            IsConfirmationVisible = true;
+            await Task.Delay(3000);
+            IsConfirmationVisible = false;
         }
     }
 }

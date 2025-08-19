@@ -29,6 +29,7 @@ namespace EsnafYonetim.UI.ViewModels
             _customerListViewModel.AddOrEditCustomerRequested += OnAddOrEditCustomerRequested;
             _stockListViewModel.AddOrEditStockRequested += OnAddOrEditStockRequested;
             _accountingViewModel.AddOrEditTransactionRequested += OnAddOrEditTransactionRequested;
+            _bildirimlerViewModel.AddOrEditNotificationRequested += OnAddOrEditNotificationRequested;
 
             _content = _dashboardViewModel;
         }
@@ -73,6 +74,20 @@ namespace EsnafYonetim.UI.ViewModels
         {
             Content = _accountingViewModel;
             _accountingViewModel.LoadTransactionsCommand.Execute(null);
+        }
+
+        // --- Bildirim Navigasyonu ---
+        private void OnAddOrEditNotificationRequested(Bildirim? bildirim)
+        {
+            var vm = new BildirimAddEditViewModel(bildirim);
+            vm.OnRequestClose += OnNotificationAddEditViewRequestClose;
+            Content = vm;
+        }
+
+        private void OnNotificationAddEditViewRequestClose()
+        {
+            Content = _bildirimlerViewModel;
+            _bildirimlerViewModel.LoadNotificationsCommand.Execute(null);
         }
 
         // --- Ana Menü Komutları ---

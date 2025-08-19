@@ -12,7 +12,7 @@
 
             <TextBlock Text="Görünüm Ayarları" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"/>
             <Border Padding="15" CornerRadius="5" BorderThickness="1" BorderBrush="LightGray">
-                <ToggleSwitch IsChecked="{Binding IsDarkMode}" OnContent="Koyu Tema" OffContent="Açık Tema"/>
+                <ToggleSwitch IsChecked="{Binding IsDarkMode, Mode=TwoWay}" OnContent="Koyu Tema" OffContent="Açık Tema"/>
             </Border>
 
             <TextBlock Text="Finansal Ayarlar" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"/>
@@ -26,11 +26,16 @@
                 </StackPanel>
             </Border>
 
-            <Button Content="Ayarları Kaydet"
-                    Command="{Binding SaveSettingsCommand}"
-                    Classes="accent"
-                    HorizontalAlignment="Left"
-                    Margin="0,30,0,0"/>
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="0,30,0,0">
+                <Button Content="Ayarları Kaydet"
+                        Command="{Binding SaveSettingsCommand}"
+                        Classes="accent"/>
+                <TextBlock Text="{Binding ConfirmationMessage}"
+                           IsVisible="{Binding IsConfirmationVisible}"
+                           Foreground="Green"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
     </Border>
 </UserControl>

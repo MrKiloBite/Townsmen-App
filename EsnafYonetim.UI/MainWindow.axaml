@@ -15,11 +15,12 @@
         <DataTemplate DataType="{x:Type vm:CustomerListViewModel}"><views:CustomerListView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:CustomerAddEditViewModel}"><views:CustomerAddEditView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:StockListViewModel}"><views:StockListView/></DataTemplate>
-        <DataTemplate DataType="{x:Type vm:AccountingViewModel}"><views:AccountingView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:StockAddEditViewModel}"><views:StockAddEditView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AccountingViewModel}"><views:AccountingView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:AccountingAddEditViewModel}"><views:AccountingAddEditView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:BildirimlerViewModel}"><views:BildirimlerView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BildirimAddEditViewModel}"><views:BildirimAddEditView/></DataTemplate>
     </Window.DataTemplates>
 
     <DockPanel>

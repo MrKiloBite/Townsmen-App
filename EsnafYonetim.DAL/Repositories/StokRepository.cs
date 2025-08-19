@@ -1,6 +1,7 @@
 using Dapper;
 using EsnafYonetim.Core.Models;
 using EsnafYonetim.DAL.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,47 +18,87 @@ namespace EsnafYonetim.DAL.Repositories
 
         public async Task<IEnumerable<Stok>> GetAllAsync()
         {
-            using var connection = _databaseService.GetConnection();
-            return await connection.QueryAsync<Stok>("SELECT * FROM STOKLAR ORDER BY UrunAdi");
+            try
+            {
+                using var connection = _databaseService.GetConnection();
+                return await connection.QueryAsync<Stok>("SELECT * FROM STOKLAR ORDER BY UrunAdi");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HATA (StokRepository.GetAllAsync): {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<Stok?> GetByIdAsync(int id)
         {
-            using var connection = _databaseService.GetConnection();
-            return await connection.QuerySingleOrDefaultAsync<Stok>("SELECT * FROM STOKLAR WHERE Id = @Id", new { Id = id });
+            try
+            {
+                using var connection = _databaseService.GetConnection();
+                return await connection.QuerySingleOrDefaultAsync<Stok>("SELECT * FROM STOKLAR WHERE Id = @Id", new { Id = id });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HATA (StokRepository.GetByIdAsync): {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<int> CreateAsync(Stok stok)
         {
-            using var connection = _databaseService.GetConnection();
-            var sql = @"
-                INSERT INTO STOKLAR (UrunKodu, UrunAdi, Miktar, Birim, AlisFiyati, SatisFiyati, EklenmeTarihi)
-                VALUES (@UrunKodu, @UrunAdi, @Miktar, @Birim, @AlisFiyati, @SatisFiyati, @EklenmeTarihi);
-                SELECT last_insert_rowid();";
-            return await connection.ExecuteScalarAsync<int>(sql, stok);
+            try
+            {
+                using var connection = _databaseService.GetConnection();
+                var sql = @"
+                    INSERT INTO STOKLAR (UrunKodu, UrunAdi, Miktar, Birim, AlisFiyati, SatisFiyati, EklenmeTarihi)
+                    VALUES (@UrunKodu, @UrunAdi, @Miktar, @Birim, @AlisFiyati, @SatisFiyati, @EklenmeTarihi);
+                    SELECT last_insert_rowid();";
+                return await connection.ExecuteScalarAsync<int>(sql, stok);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HATA (StokRepository.CreateAsync): {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<bool> UpdateAsync(Stok stok)
         {
-            using var connection = _databaseService.GetConnection();
-            var sql = @"
-                UPDATE STOKLAR SET
-                    UrunKodu = @UrunKodu,
-                    UrunAdi = @UrunAdi,
-                    Miktar = @Miktar,
-                    Birim = @Birim,
-                    AlisFiyati = @AlisFiyati,
-                    SatisFiyati = @SatisFiyati
-                WHERE Id = @Id;";
-            var affectedRows = await connection.ExecuteAsync(sql, stok);
-            return affectedRows > 0;
+            try
+            {
+                using var connection = _databaseService.GetConnection();
+                var sql = @"
+                    UPDATE STOKLAR SET
+                        UrunKodu = @UrunKodu,
+                        UrunAdi = @UrunAdi,
+                        Miktar = @Miktar,
+                        Birim = @Birim,
+                        AlisFiyati = @AlisFiyati,
+                        SatisFiyati = @SatisFiyati
+                    WHERE Id = @Id;";
+                var affectedRows = await connection.ExecuteAsync(sql, stok);
+                return affectedRows > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HATA (StokRepository.UpdateAsync): {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            using var connection = _databaseService.GetConnection();
-            var affectedRows = await connection.ExecuteAsync("DELETE FROM STOKLAR WHERE Id = @Id", new { Id = id });
-            return affectedRows > 0;
+            try
+            {
+                using var connection = _databaseService.GetConnection();
+                var affectedRows = await connection.ExecuteAsync("DELETE FROM STOKLAR WHERE Id = @Id", new { Id = id });
+                return affectedRows > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HATA (StokRepository.DeleteAsync): {ex.Message}");
+                throw;
+            }
         }
     }
 }
