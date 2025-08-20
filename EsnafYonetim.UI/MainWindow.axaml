@@ -32,10 +32,9 @@
             <Button Content="Muhasebe" Command="{Binding ShowAccountingCommand}" Classes="navButton"/>
             <Button Content="Bildirimler" Command="{Binding ShowBildirimlerCommand}" Classes="navButton"/>
             <Button Content="Ayarlar" Command="{Binding ShowSettingsCommand}" Classes="navButton"/>
-            <!-- Diğer menü öğeleri buraya eklenecek -->
         </StackPanel>
 
-        <Border CornerRadius="10" Background="#F0F2F5" Margin="10">
+        <Border CornerRadius="10" Background="{DynamicResource ApplicationPageBackgroundThemeBrush}" Margin="10">
             <ContentControl Content="{Binding Content}" Margin="15"/>
         </Border>
     </DockPanel>

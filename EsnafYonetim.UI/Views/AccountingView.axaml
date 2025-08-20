@@ -6,6 +6,21 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="EsnafYonetim.UI.Views.AccountingView"
              x:DataType="vm:AccountingViewModel">
+    <UserControl.Styles>
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="{DynamicResource DataGridBackgroundThemeBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DataGridGridLinesBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="RowBackground" Value="{DynamicResource DataGridRowBackgroundThemeBrush}"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource DataGridColumnHeaderBackgroundThemeBrush}"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{DynamicResource DataGridRowPointerOverBackgroundThemeBrush}"/>
+        </Style>
+    </UserControl.Styles>
     <DockPanel Margin="15">
         <TextBlock Text="Muhasebe Kayıtları" FontSize="22" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,15"/>
 
