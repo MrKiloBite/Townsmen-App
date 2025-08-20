@@ -21,7 +21,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QueryAsync<Bildirim>("SELECT * FROM BILDIRIMLER");
+                return await connection.QueryAsync<Bildirim>("SELECT * FROM Bildirimler");
             }
             catch (Exception ex)
             {
@@ -36,8 +36,8 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    INSERT INTO BILDIRIMLER (Aktif, Mesaj, Tip, TetiklenmeZamani, HedefId, Operator, Deger, SesDosyasiYolu, OlusturmaTarihi)
-                    VALUES (@Aktif, @Mesaj, @Tip, @TetiklenmeZamani, @HedefId, @Operator, @Deger, @SesDosyasiYolu, @OlusturmaTarihi);
+                    INSERT INTO Bildirimler (Aktif, Mesaj, Tip, TetiklenmeZamani, HedefStokID, Operator, Deger, SesDosyasiYolu, OlusturmaTarihi)
+                    VALUES (@Aktif, @Mesaj, @Tip, @TetiklenmeZamani, @HedefStokID, @Operator, @Deger, @SesDosyasiYolu, @OlusturmaTarihi);
                     SELECT last_insert_rowid();";
                 return await connection.ExecuteScalarAsync<int>(sql, bildirim);
             }
@@ -54,12 +54,12 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    UPDATE BILDIRIMLER SET
+                    UPDATE Bildirimler SET
                         Aktif = @Aktif,
                         Mesaj = @Mesaj,
                         Tip = @Tip,
                         TetiklenmeZamani = @TetiklenmeZamani,
-                        HedefId = @HedefId,
+                        HedefStokID = @HedefStokID,
                         Operator = @Operator,
                         Deger = @Deger,
                         SesDosyasiYolu = @SesDosyasiYolu
@@ -79,7 +79,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                var affectedRows = await connection.ExecuteAsync("DELETE FROM BILDIRIMLER WHERE Id = @Id", new { Id = id });
+                var affectedRows = await connection.ExecuteAsync("DELETE FROM Bildirimler WHERE Id = @Id", new { Id = id });
                 return affectedRows > 0;
             }
             catch (Exception ex)

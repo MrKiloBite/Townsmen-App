@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EsnafYonetim.UI.Views;
+using System;
 
 namespace EsnafYonetim.UI.ViewModels
 {
@@ -44,17 +45,32 @@ namespace EsnafYonetim.UI.ViewModels
             AddNewTransactionCommand = new RelayCommand(AddNewTransaction);
             EditTransactionCommand = new RelayCommand(EditTransaction, CanEditOrDeleteTransaction);
             DeleteTransactionCommand = new AsyncRelayCommand(DeleteTransaction, CanEditOrDeleteTransaction);
-
-            _ = LoadTransactionsAsync();
         }
 
-        public async Task LoadTransactionsAsync()
+        public async Task InitializeAsync()
         {
-            Transactions.Clear();
-            var transactionsFromDb = await _accountingManager.GetAllTransactionsAsync();
-            foreach (var transaction in transactionsFromDb)
+            await LoadTransactionsAsync();
+        }
+
+        private async Task LoadTransactionsAsync()
+        {
+            IsBusy = true;
+            try
             {
-                Transactions.Add(transaction);
+                Transactions.Clear();
+                var transactionsFromDb = await _accountingManager.GetAllTransactionsAsync();
+                foreach (var transaction in transactionsFromDb)
+                {
+                    Transactions.Add(transaction);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load transactions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -78,8 +94,16 @@ namespace EsnafYonetim.UI.ViewModels
         {
             if (SelectedTransaction != null)
             {
-                await _accountingManager.DeleteTransactionAsync(SelectedTransaction.Id);
-                Transactions.Remove(SelectedTransaction);
+                IsBusy = true;
+                try
+                {
+                    await _accountingManager.DeleteTransactionAsync(SelectedTransaction.Id);
+                    Transactions.Remove(SelectedTransaction);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 

@@ -15,6 +15,10 @@ namespace EsnafYonetim.Core.Models
         // Pillar 1'de belirtilen alanlar
         public byte[]? MusteriFotograf { get; set; }
         public byte[]? FisFotograf { get; set; }
-        public string Status { get; set; } = "active"; // Varsayılan değer "active"
+        public string Status { get; set; } = "active"; // 'active', 'archived', 'deleted'
+
+        // Foreign Keys
+        public int? MusteriTuruID { get; set; }
+        public int? AcentaID { get; set; }
     }
 }

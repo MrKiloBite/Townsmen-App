@@ -13,10 +13,10 @@ namespace EsnafYonetim.Core.Models
         public BildirimTipi Tip { get; set; }
 
         // Zamanlanmış bildirimler için
-        public DateTime? TetiklenmeZamani { get; set; }
+        public DateTimeOffset? TetiklenmeZamani { get; set; }
 
         // Koşullu bildirimler için (örn: Stok Seviyesi)
-        public int? HedefId { get; set; } // örn: Stok ID'si
+        public int? HedefStokID { get; set; } // örn: Stok ID'si
         public KarsilastirmaOperatoru Operator { get; set; }
         public double Deger { get; set; } // örn: Stok Miktarı
 

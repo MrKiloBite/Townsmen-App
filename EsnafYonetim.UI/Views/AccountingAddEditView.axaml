@@ -17,17 +17,6 @@
                     <ComboBoxItem>Gider</ComboBoxItem>
                 </ComboBox>
 
-                <TextBlock Text="Ödeme Tipi:" Margin="0,5,0,0"/>
-                <ComboBox SelectedItem="{Binding Transaction.OdemeTipi}">
-                    <ComboBoxItem>Nakit</ComboBoxItem>
-                    <ComboBoxItem>POS</ComboBoxItem>
-                    <ComboBoxItem>Havale</ComboBoxItem>
-                    <ComboBoxItem>Borç</ComboBoxItem>
-                </ComboBox>
-
-                <TextBlock Text="Kategori:" Margin="0,5,0,0"/>
-                <TextBox Text="{Binding Transaction.Kategori}"/>
-
                 <TextBlock Text="Brüt Tutar:" Margin="0,5,0,0"/>
                 <NumericUpDown Value="{Binding Transaction.BrutTutar}" FormatString="C2"/>
 

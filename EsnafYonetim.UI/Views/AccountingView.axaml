@@ -37,8 +37,6 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="İşlem Tipi" Binding="{Binding IslemTipi}" Width="90"/>
-                <DataGridTextColumn Header="Ödeme Tipi" Binding="{Binding OdemeTipi}" Width="90"/>
-                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="120"/>
                 <DataGridTextColumn Header="Brüt Tutar" Binding="{Binding BrutTutar, StringFormat='C'}" Width="100"/>
                 <DataGridTextColumn Header="KDV Oranı" Binding="{Binding UygulananKDVOrani, StringFormat=P0}" Width="90"/>
                 <DataGridTextColumn Header="KDV Tutarı" Binding="{Binding KDV_Tutari, StringFormat=C2}" Width="90"/>

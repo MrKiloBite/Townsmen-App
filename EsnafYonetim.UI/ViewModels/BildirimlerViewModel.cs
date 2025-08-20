@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EsnafYonetim.UI.Views;
+using System;
 
 namespace EsnafYonetim.UI.ViewModels
 {
@@ -44,17 +45,32 @@ namespace EsnafYonetim.UI.ViewModels
             AddNewNotificationCommand = new RelayCommand(AddNewNotification);
             EditNotificationCommand = new RelayCommand(EditNotification, CanEditOrDeleteNotification);
             DeleteNotificationCommand = new AsyncRelayCommand(DeleteNotification, CanEditOrDeleteNotification);
-
-            _ = LoadNotificationsAsync();
         }
 
-        public async Task LoadNotificationsAsync()
+        public async Task InitializeAsync()
         {
-            Notifications.Clear();
-            var notificationsFromDb = await _bildirimManager.GetAllAsync();
-            foreach (var notification in notificationsFromDb)
+            await LoadNotificationsAsync();
+        }
+
+        private async Task LoadNotificationsAsync()
+        {
+            IsBusy = true;
+            try
             {
-                Notifications.Add(notification);
+                Notifications.Clear();
+                var notificationsFromDb = await _bildirimManager.GetAllAsync();
+                foreach (var notification in notificationsFromDb)
+                {
+                    Notifications.Add(notification);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load notifications: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -78,8 +94,16 @@ namespace EsnafYonetim.UI.ViewModels
         {
             if (SelectedNotification != null)
             {
-                await _bildirimManager.DeleteAsync(SelectedNotification.Id);
-                Notifications.Remove(SelectedNotification);
+                IsBusy = true;
+                try
+                {
+                    await _bildirimManager.DeleteAsync(SelectedNotification.Id);
+                    Notifications.Remove(SelectedNotification);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 

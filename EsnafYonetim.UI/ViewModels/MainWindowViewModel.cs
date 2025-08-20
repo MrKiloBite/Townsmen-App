@@ -1,6 +1,6 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.UI.Views;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EsnafYonetim.UI.ViewModels
@@ -24,16 +24,15 @@ namespace EsnafYonetim.UI.ViewModels
 
         public MainWindowViewModel()
         {
-            // Komutları ayarla
             ShowDashboardCommand = new RelayCommand(ShowDashboard);
-            ShowCustomersCommand = new RelayCommand(ShowCustomers);
-            ShowStockCommand = new RelayCommand(ShowStock);
-            ShowAccountingCommand = new RelayCommand(ShowAccounting);
-            ShowBildirimlerCommand = new RelayCommand(ShowBildirimler);
+            ShowCustomersCommand = new AsyncRelayCommand(ShowCustomersAsync);
+            ShowStockCommand = new AsyncRelayCommand(ShowStockAsync);
+            ShowAccountingCommand = new AsyncRelayCommand(ShowAccountingAsync);
+            ShowBildirimlerCommand = new AsyncRelayCommand(ShowBildirimlerAsync);
             ShowSettingsCommand = new RelayCommand(ShowSettings);
 
-            // Başlangıç içeriğini ayarla
-            Content = new DashboardView();
+            // Set initial content
+            ShowDashboard();
         }
 
         private void ShowDashboard()
@@ -41,24 +40,32 @@ namespace EsnafYonetim.UI.ViewModels
             Content = new DashboardView();
         }
 
-        private void ShowCustomers()
+        private async Task ShowCustomersAsync()
         {
-            Content = new CustomerListView { DataContext = new CustomerListViewModel(this) };
+            var vm = new CustomerListViewModel(this);
+            Content = new CustomerListView { DataContext = vm };
+            await vm.InitializeAsync();
         }
 
-        private void ShowStock()
+        private async Task ShowStockAsync()
         {
-            Content = new StockListView { DataContext = new StockListViewModel(this) };
+            var vm = new StockListViewModel(this);
+            Content = new StockListView { DataContext = vm };
+            await vm.InitializeAsync();
         }
 
-        private void ShowAccounting()
+        private async Task ShowAccountingAsync()
         {
-            Content = new AccountingView { DataContext = new AccountingViewModel(this) };
+            var vm = new AccountingViewModel(this);
+            Content = new AccountingView { DataContext = vm };
+            await vm.InitializeAsync();
         }
 
-        private void ShowBildirimler()
+        private async Task ShowBildirimlerAsync()
         {
-            Content = new BildirimlerView { DataContext = new BildirimlerViewModel(this) };
+            var vm = new BildirimlerViewModel(this);
+            Content = new BildirimlerView { DataContext = vm };
+            await vm.InitializeAsync();
         }
 
         private void ShowSettings()

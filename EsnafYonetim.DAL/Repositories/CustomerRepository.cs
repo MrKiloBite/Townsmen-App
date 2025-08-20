@@ -21,7 +21,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QueryAsync<Musteri>("SELECT * FROM MUSTERI ORDER BY AdSoyad");
+                return await connection.QueryAsync<Musteri>("SELECT * FROM Musteriler ORDER BY AdSoyad");
             }
             catch (Exception ex)
             {
@@ -35,7 +35,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QuerySingleOrDefaultAsync<Musteri>("SELECT * FROM MUSTERI WHERE Id = @Id", new { Id = id });
+                return await connection.QuerySingleOrDefaultAsync<Musteri>("SELECT * FROM Musteriler WHERE Id = @Id", new { Id = id });
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    INSERT INTO MUSTERI (AdSoyad, Telefon, Adres, Eposta, Notlar, OlusturmaTarihi, MusteriFotograf, FisFotograf, Status)
+                    INSERT INTO Musteriler (AdSoyad, Telefon, Adres, Eposta, Notlar, OlusturmaTarihi, MusteriFotograf, FisFotograf, Status)
                     VALUES (@AdSoyad, @Telefon, @Adres, @Eposta, @Notlar, @OlusturmaTarihi, @MusteriFotograf, @FisFotograf, @Status);
                     SELECT last_insert_rowid();";
                 return await connection.ExecuteScalarAsync<int>(sql, musteri);
@@ -68,7 +68,7 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    UPDATE MUSTERI SET
+                    UPDATE Musteriler SET
                         AdSoyad = @AdSoyad,
                         Telefon = @Telefon,
                         Adres = @Adres,
@@ -93,7 +93,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                var affectedRows = await connection.ExecuteAsync("DELETE FROM MUSTERI WHERE Id = @Id", new { Id = id });
+                var affectedRows = await connection.ExecuteAsync("DELETE FROM Musteriler WHERE Id = @Id", new { Id = id });
                 return affectedRows > 0;
             }
             catch (Exception ex)

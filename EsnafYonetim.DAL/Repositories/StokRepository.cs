@@ -21,7 +21,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QueryAsync<Stok>("SELECT * FROM STOKLAR ORDER BY UrunAdi");
+                return await connection.QueryAsync<Stok>("SELECT * FROM Stok ORDER BY UrunAdi");
             }
             catch (Exception ex)
             {
@@ -35,7 +35,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QuerySingleOrDefaultAsync<Stok>("SELECT * FROM STOKLAR WHERE Id = @Id", new { Id = id });
+                return await connection.QuerySingleOrDefaultAsync<Stok>("SELECT * FROM Stok WHERE Id = @Id", new { Id = id });
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    INSERT INTO STOKLAR (UrunKodu, UrunAdi, Miktar, Birim, AlisFiyati, SatisFiyati, EklenmeTarihi)
+                    INSERT INTO Stok (UrunKodu, UrunAdi, Miktar, Birim, AlisFiyati, SatisFiyati, EklenmeTarihi)
                     VALUES (@UrunKodu, @UrunAdi, @Miktar, @Birim, @AlisFiyati, @SatisFiyati, @EklenmeTarihi);
                     SELECT last_insert_rowid();";
                 return await connection.ExecuteScalarAsync<int>(sql, stok);
@@ -68,7 +68,7 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    UPDATE STOKLAR SET
+                    UPDATE Stok SET
                         UrunKodu = @UrunKodu,
                         UrunAdi = @UrunAdi,
                         Miktar = @Miktar,
@@ -91,7 +91,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                var affectedRows = await connection.ExecuteAsync("DELETE FROM STOKLAR WHERE Id = @Id", new { Id = id });
+                var affectedRows = await connection.ExecuteAsync("DELETE FROM Stok WHERE Id = @Id", new { Id = id });
                 return affectedRows > 0;
             }
             catch (Exception ex)

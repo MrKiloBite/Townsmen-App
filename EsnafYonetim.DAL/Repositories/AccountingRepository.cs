@@ -21,7 +21,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QueryAsync<Muhasebe>("SELECT * FROM MUHASEBE ORDER BY IslemTarihi DESC");
+                return await connection.QueryAsync<Muhasebe>("SELECT * FROM Muhasebe ORDER BY IslemTarihi DESC");
             }
             catch (Exception ex)
             {
@@ -35,7 +35,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                return await connection.QuerySingleOrDefaultAsync<Muhasebe>("SELECT * FROM MUHASEBE WHERE Id = @Id", new { Id = id });
+                return await connection.QuerySingleOrDefaultAsync<Muhasebe>("SELECT * FROM Muhasebe WHERE Id = @Id", new { Id = id });
             }
             catch (Exception ex)
             {
@@ -50,8 +50,8 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    INSERT INTO MUHASEBE (MusteriId, IslemTipi, Kategori, BrutTutar, OdemeTipi, UygulananKDVOrani, UygulananKomisyonOrani, IslemTarihi, VadeTarihi, OdemeDurumu, Aciklama)
-                    VALUES (@MusteriId, @IslemTipi, @Kategori, @BrutTutar, @OdemeTipi, @UygulananKDVOrani, @UygulananKomisyonOrani, @IslemTarihi, @VadeTarihi, @OdemeDurumu, @Aciklama);
+                    INSERT INTO Muhasebe (IslemTarihi, Aciklama, IslemTipi, OdemeDurumu, BrutTutar, NetTutar, GenelToplam, FaturaFotograf, KDV_Oran_ID, UygulananKDVOrani, KDV_Tutari, POS_Komisyon_ID, UygulananKomisyonOrani, KomisyonTutari)
+                    VALUES (@IslemTarihi, @Aciklama, @IslemTipi, @OdemeDurumu, @BrutTutar, @NetTutar, @GenelToplam, @FaturaFotograf, @KDV_Oran_ID, @UygulananKDVOrani, @KDV_Tutari, @POS_Komisyon_ID, @UygulananKomisyonOrani, @KomisyonTutari);
                     SELECT last_insert_rowid();";
                 return await connection.ExecuteScalarAsync<int>(sql, transaction);
             }
@@ -68,18 +68,21 @@ namespace EsnafYonetim.DAL.Repositories
             {
                 using var connection = _databaseService.GetConnection();
                 var sql = @"
-                    UPDATE MUHASEBE SET
-                        MusteriId = @MusteriId,
-                        IslemTipi = @IslemTipi,
-                        Kategori = @Kategori,
-                        BrutTutar = @BrutTutar,
-                        OdemeTipi = @OdemeTipi,
-                        UygulananKDVOrani = @UygulananKDVOrani,
-                        UygulananKomisyonOrani = @UygulananKomisyonOrani,
+                    UPDATE Muhasebe SET
                         IslemTarihi = @IslemTarihi,
-                        VadeTarihi = @VadeTarihi,
+                        Aciklama = @Aciklama,
+                        IslemTipi = @IslemTipi,
                         OdemeDurumu = @OdemeDurumu,
-                        Aciklama = @Aciklama
+                        BrutTutar = @BrutTutar,
+                        NetTutar = @NetTutar,
+                        GenelToplam = @GenelToplam,
+                        FaturaFotograf = @FaturaFotograf,
+                        KDV_Oran_ID = @KDV_Oran_ID,
+                        UygulananKDVOrani = @UygulananKDVOrani,
+                        KDV_Tutari = @KDV_Tutari,
+                        POS_Komisyon_ID = @POS_Komisyon_ID,
+                        UygulananKomisyonOrani = @UygulananKomisyonOrani,
+                        KomisyonTutari = @KomisyonTutari
                     WHERE Id = @Id;";
                 var affectedRows = await connection.ExecuteAsync(sql, transaction);
                 return affectedRows > 0;
@@ -96,7 +99,7 @@ namespace EsnafYonetim.DAL.Repositories
             try
             {
                 using var connection = _databaseService.GetConnection();
-                var affectedRows = await connection.ExecuteAsync("DELETE FROM MUHASEBE WHERE Id = @Id", new { Id = id });
+                var affectedRows = await connection.ExecuteAsync("DELETE FROM Muhasebe WHERE Id = @Id", new { Id = id });
                 return affectedRows > 0;
             }
             catch (Exception ex)

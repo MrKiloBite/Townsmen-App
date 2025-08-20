@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EsnafYonetim.UI.Views;
+using System;
 
 namespace EsnafYonetim.UI.ViewModels
 {
@@ -44,17 +45,32 @@ namespace EsnafYonetim.UI.ViewModels
             AddNewStockCommand = new RelayCommand(AddNewStock);
             EditStockCommand = new RelayCommand(EditStock, CanEditOrDeleteStock);
             DeleteStockCommand = new AsyncRelayCommand(DeleteStock, CanEditOrDeleteStock);
-
-            _ = LoadStocksAsync();
         }
 
-        public async Task LoadStocksAsync()
+        public async Task InitializeAsync()
         {
-            Stocks.Clear();
-            var stocksFromDb = await _inventoryManager.GetAllItemsAsync();
-            foreach (var stock in stocksFromDb)
+            await LoadStocksAsync();
+        }
+
+        private async Task LoadStocksAsync()
+        {
+            IsBusy = true;
+            try
             {
-                Stocks.Add(stock);
+                Stocks.Clear();
+                var stocksFromDb = await _inventoryManager.GetAllItemsAsync();
+                foreach (var stock in stocksFromDb)
+                {
+                    Stocks.Add(stock);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load stocks: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -78,8 +94,16 @@ namespace EsnafYonetim.UI.ViewModels
         {
             if (SelectedStock != null)
             {
-                await _inventoryManager.DeleteItemAsync(SelectedStock.Id);
-                Stocks.Remove(SelectedStock);
+                IsBusy = true;
+                try
+                {
+                    await _inventoryManager.DeleteItemAsync(SelectedStock.Id);
+                    Stocks.Remove(SelectedStock);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 

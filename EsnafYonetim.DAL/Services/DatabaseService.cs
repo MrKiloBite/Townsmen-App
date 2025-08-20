@@ -27,86 +27,116 @@ namespace EsnafYonetim.DAL.Services
             if (File.Exists(_databasePath))
             {
                 // Veritabanı zaten var, bir şey yapma.
+                // İleride buraya migrasyon mantığı eklenebilir.
                 return;
             }
 
             using var connection = GetConnection();
             connection.Open();
 
-            // MUSTERI Tablosu
-            connection.Execute(@"
-            CREATE TABLE MUSTERI (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                AdSoyad TEXT,
-                Telefon TEXT,
-                Adres TEXT,
-                Eposta TEXT,
-                Notlar TEXT,
-                OlusturmaTarihi TEXT NOT NULL,
-                MusteriFotograf BLOB,
-                FisFotograf BLOB,
-                Status TEXT NOT NULL
-            );");
+            // docs/schema.sql dosyasından alınan yeni şema
+            var schema = @"
+                CREATE TABLE IF NOT EXISTS Ayarlar (
+                    AyarID      INTEGER PRIMARY KEY,
+                    Anahtar     TEXT NOT NULL UNIQUE,
+                    Deger       TEXT NOT NULL
+                );
 
-            // STOKLAR Tablosu
-            connection.Execute(@"
-            CREATE TABLE STOKLAR (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                UrunKodu TEXT,
-                UrunAdi TEXT,
-                Miktar REAL NOT NULL,
-                Birim TEXT,
-                AlisFiyati REAL NOT NULL,
-                SatisFiyati REAL NOT NULL,
-                EklenmeTarihi TEXT NOT NULL
-            );");
+                CREATE TABLE IF NOT EXISTS MusteriTurleri (
+                    MusteriTuruID   INTEGER PRIMARY KEY,
+                    TurAdi          TEXT NOT NULL UNIQUE
+                );
 
-            // MUHASEBE Tablosu
-            connection.Execute(@"
-            CREATE TABLE MUHASEBE (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                MusteriId INTEGER,
-                IslemTipi TEXT NOT NULL,
-                Kategori TEXT,
-                BrutTutar REAL NOT NULL,
-                OdemeTipi TEXT NOT NULL,
-                UygulananKDVOrani REAL NOT NULL,
-                UygulananKomisyonOrani REAL NOT NULL,
-                IslemTarihi TEXT NOT NULL,
-                VadeTarihi TEXT,
-                OdemeDurumu TEXT NOT NULL,
-                Aciklama TEXT,
-                FOREIGN KEY (MusteriId) REFERENCES MUSTERI(Id)
-            );");
+                CREATE TABLE IF NOT EXISTS Acentalar (
+                    AcentaID    INTEGER PRIMARY KEY,
+                    AcentaAdi   TEXT NOT NULL UNIQUE
+                );
 
-            // ISLEMLER Tablosu
-            connection.Execute(@"
-            CREATE TABLE ISLEMLER (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                MusteriId INTEGER NOT NULL,
-                MuhasebeId INTEGER NOT NULL,
-                IslemTipi TEXT NOT NULL,
-                IslemTarihi TEXT NOT NULL,
-                ToplamTutar REAL NOT NULL,
-                Aciklama TEXT,
-                FOREIGN KEY (MusteriId) REFERENCES MUSTERI(Id),
-                FOREIGN KEY (MuhasebeId) REFERENCES MUHASEBE(Id)
-            );");
+                CREATE TABLE IF NOT EXISTS Musteriler (
+                    Id                  INTEGER PRIMARY KEY,
+                    AdSoyad             TEXT NOT NULL,
+                    Telefon             TEXT,
+                    Adres               TEXT,
+                    Eposta              TEXT,
+                    Notlar              TEXT,
+                    OlusturmaTarihi     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    MusteriFotograf     BLOB,
+                    FisFotograf         BLOB,
+                    Status              TEXT NOT NULL DEFAULT 'active',
+                    MusteriTuruID       INTEGER,
+                    AcentaID            INTEGER,
+                    FOREIGN KEY (MusteriTuruID) REFERENCES MusteriTurleri(MusteriTuruID),
+                    FOREIGN KEY (AcentaID) REFERENCES Acentalar(AcentaID)
+                );
 
-            // BILDIRIMLER Tablosu
-            connection.Execute(@"
-            CREATE TABLE BILDIRIMLER (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Aktif INTEGER NOT NULL,
-                Mesaj TEXT NOT NULL,
-                Tip INTEGER NOT NULL,
-                TetiklenmeZamani TEXT,
-                HedefId INTEGER,
-                Operator INTEGER NOT NULL,
-                Deger REAL NOT NULL,
-                SesDosyasiYolu TEXT,
-                OlusturmaTarihi TEXT NOT NULL
-            );");
+                CREATE TABLE IF NOT EXISTS Stok (
+                    Id              INTEGER PRIMARY KEY,
+                    UrunKodu        TEXT UNIQUE,
+                    UrunAdi         TEXT NOT NULL,
+                    Miktar          REAL NOT NULL DEFAULT 0,
+                    Birim           TEXT,
+                    AlisFiyati      REAL,
+                    SatisFiyati     REAL NOT NULL,
+                    EklenmeTarihi   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS Bildirimler (
+                    Id                  INTEGER PRIMARY KEY,
+                    Aktif               INTEGER NOT NULL DEFAULT 1,
+                    Mesaj               TEXT NOT NULL,
+                    Tip                 TEXT NOT NULL,
+                    TetiklenmeZamani    DATETIME,
+                    HedefStokID         INTEGER,
+                    Operator            TEXT,
+                    Deger               REAL,
+                    SesDosyasiYolu      TEXT,
+                    OlusturmaTarihi     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (HedefStokID) REFERENCES Stok(Id)
+                );
+
+                CREATE TABLE IF NOT EXISTS HesapPlani (
+                    HesapID     INTEGER PRIMARY KEY,
+                    HesapKodu   TEXT NOT NULL UNIQUE,
+                    HesapAdi    TEXT NOT NULL,
+                    HesapTipi   TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS KDV_Oranlari (
+                    KDV_OranID      INTEGER PRIMARY KEY,
+                    KategoriAdi     TEXT NOT NULL UNIQUE,
+                    Oran            REAL NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS POS_Komisyonlari (
+                    POS_KomisyonID              INTEGER PRIMARY KEY,
+                    BankaAdi                    TEXT NOT NULL UNIQUE,
+                    KomisyonOraniTekCekim       REAL NOT NULL,
+                    KomisyonOraniTaksitli       REAL,
+                    ValorSuresi                 INTEGER
+                );
+
+                CREATE TABLE IF NOT EXISTS Muhasebe (
+                    Id                      INTEGER PRIMARY KEY,
+                    IslemTarihi             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    Aciklama                TEXT,
+                    IslemTipi               TEXT NOT NULL,
+                    OdemeDurumu             TEXT NOT NULL,
+                    BrutTutar               REAL NOT NULL,
+                    NetTutar                REAL NOT NULL,
+                    GenelToplam             REAL NOT NULL,
+                    FaturaFotograf          BLOB,
+                    KDV_Oran_ID             INTEGER,
+                    UygulananKDVOrani       REAL,
+                    KDV_Tutari              REAL,
+                    POS_Komisyon_ID         INTEGER,
+                    UygulananKomisyonOrani  REAL,
+                    KomisyonTutari          REAL,
+                    FOREIGN KEY (KDV_Oran_ID) REFERENCES KDV_Oranlari(KDV_OranID),
+                    FOREIGN KEY (POS_Komisyon_ID) REFERENCES POS_Komisyonlari(POS_KomisyonID)
+                );
+            ";
+
+            connection.Execute(schema);
         }
     }
 }

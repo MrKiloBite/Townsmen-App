@@ -23,7 +23,7 @@
                 <DataGridTextColumn Header="Mesaj" Binding="{Binding Mesaj}" Width="*"/>
                 <DataGridTextColumn Header="Tip" Binding="{Binding Tip}"/>
                 <DataGridTextColumn Header="Tetiklenme Zamanı" Binding="{Binding TetiklenmeZamani, StringFormat='g'}"/>
-                <DataGridTextColumn Header="Koşul" Binding="{Binding HedefId}"/>
+                <DataGridTextColumn Header="Hedef Stok ID" Binding="{Binding HedefStokID}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

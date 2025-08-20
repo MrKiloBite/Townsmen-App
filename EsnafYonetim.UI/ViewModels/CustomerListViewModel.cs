@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EsnafYonetim.UI.Views;
+using System;
 
 namespace EsnafYonetim.UI.ViewModels
 {
@@ -44,17 +45,34 @@ namespace EsnafYonetim.UI.ViewModels
             AddNewCustomerCommand = new RelayCommand(AddNewCustomer);
             EditCustomerCommand = new RelayCommand(EditCustomer, CanEditOrDeleteCustomer);
             DeleteCustomerCommand = new AsyncRelayCommand(DeleteCustomer, CanEditOrDeleteCustomer);
-
-            _ = LoadCustomersAsync();
         }
 
-        public async Task LoadCustomersAsync()
+        // This method will be called from MainWindowViewModel after the view is created.
+        public async Task InitializeAsync()
         {
-            Customers.Clear();
-            var customersFromDb = await _customerManager.GetAllCustomersAsync();
-            foreach (var customer in customersFromDb)
+            await LoadCustomersAsync();
+        }
+
+        private async Task LoadCustomersAsync()
+        {
+            IsBusy = true;
+            try
             {
-                Customers.Add(customer);
+                Customers.Clear();
+                var customersFromDb = await _customerManager.GetAllCustomersAsync();
+                foreach (var customer in customersFromDb)
+                {
+                    Customers.Add(customer);
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: Show a message to the user
+                Console.WriteLine($"Failed to load customers: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -78,8 +96,16 @@ namespace EsnafYonetim.UI.ViewModels
         {
             if (SelectedCustomer != null)
             {
-                await _customerManager.DeleteCustomerAsync(SelectedCustomer.Id);
-                Customers.Remove(SelectedCustomer);
+                IsBusy = true;
+                try
+                {
+                    await _customerManager.DeleteCustomerAsync(SelectedCustomer.Id);
+                    Customers.Remove(SelectedCustomer);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 
