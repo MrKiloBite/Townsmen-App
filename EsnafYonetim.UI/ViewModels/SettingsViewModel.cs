@@ -1,13 +1,8 @@
 using Avalonia;
-using System;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Services;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -33,41 +28,41 @@ namespace EsnafYonetim.UI.ViewModels
         private bool _isConfirmationVisible;
 
         public ICommand SaveSettingsCommand { get; }
-
-        partial void OnIsDarkModeChanged(bool value)
-        {
-            Application.Current!.RequestedThemeVariant = value ? ThemeVariant.Dark : ThemeVariant.Light;
-        }
+        public ICommand ToggleThemeCommand { get; }
 
         public SettingsViewModel()
         {
             _settingsService = new SettingsService();
-            KdvRate = _settingsService.KDVRate;
-            PosCommissionRate = _settingsService.POSCommissionRate;
-            IsDarkMode = Application.Current!.RequestedThemeVariant == ThemeVariant.Dark;
+            _kdvRate = _settingsService.KDVRate;
+            _posCommissionRate = _settingsService.POSCommissionRate;
+
+            // Set initial theme state from service
+            _isDarkMode = _settingsService.Theme.Equals("Dark", System.StringComparison.OrdinalIgnoreCase);
+            // Apply the theme immediately
+            Application.Current!.RequestedThemeVariant = _isDarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
 
             SaveSettingsCommand = new AsyncRelayCommand(SaveSettingsAsync);
+            ToggleThemeCommand = new RelayCommand(ToggleTheme);
+        }
+
+        private void ToggleTheme()
+        {
+            IsDarkMode = !IsDarkMode; // This will trigger the UI change via the setter
+            Application.Current!.RequestedThemeVariant = IsDarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
+
+            // Update service and save
+            _settingsService.Theme = IsDarkMode ? "Dark" : "Light";
+            _settingsService.SaveSettings();
         }
 
         private async Task SaveSettingsAsync()
         {
-            var configPath = Path.Combine(AppContext.BaseDirectory, "config.txt");
+            // Update service with values from UI
+            _settingsService.KDVRate = KdvRate;
+            _settingsService.POSCommissionRate = PosCommissionRate;
 
-            var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if (File.Exists(configPath))
-            {
-                var lines = File.ReadAllLines(configPath);
-                settings = lines
-                    .Where(line => !string.IsNullOrWhiteSpace(line) && !line.TrimStart().StartsWith("#") && line.Contains('='))
-                    .Select(line => line.Split('=', 2))
-                    .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim(), System.StringComparer.OrdinalIgnoreCase);
-            }
-
-            settings["kdv_orani"] = KdvRate.ToString(CultureInfo.InvariantCulture);
-            settings["pos_komisyon_orani"] = PosCommissionRate.ToString(CultureInfo.InvariantCulture);
-
-            var newLines = settings.Select(kvp => $"{kvp.Key}={kvp.Value}").ToList();
-            File.WriteAllLines(configPath, newLines);
+            // Save all settings
+            _settingsService.SaveSettings();
 
             ConfirmationMessage = "Ayarlar başarıyla kaydedildi!";
             IsConfirmationVisible = true;

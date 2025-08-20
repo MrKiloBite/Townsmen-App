@@ -11,7 +11,6 @@
             <Setter Property="Background" Value="{DynamicResource DataGridBackgroundThemeBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource DataGridGridLinesBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="GridLinesVisibility" Value="All"/>
             <Setter Property="RowBackground" Value="{DynamicResource DataGridRowBackgroundThemeBrush}"/>
         </Style>
         <Style Selector="DataGridColumnHeader">

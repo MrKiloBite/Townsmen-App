@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -7,32 +8,33 @@ namespace EsnafYonetim.BLL.Services
 {
     public class SettingsService
     {
-        private const string ConfigFileName = "config.txt";
+        private readonly string _configPath;
 
-        public string Username { get; private set; } = "default_user";
-        public decimal KDVRate { get; private set; } = 0.20m;
-        public decimal POSCommissionRate { get; private set; } = 0.015m;
+        public string Username { get; set; } = "default_user";
+        public decimal KDVRate { get; set; } = 0.20m;
+        public decimal POSCommissionRate { get; set; } = 0.015m;
+        public string Theme { get; set; } = "Light"; // Default theme
 
         public SettingsService()
         {
+            _configPath = Path.Combine(AppContext.BaseDirectory, "config.txt");
             LoadSettings();
         }
 
-        private void LoadSettings()
+        public void LoadSettings()
         {
-            var configPath = Path.Combine(AppContext.BaseDirectory, "config.txt");
-            if (!File.Exists(configPath))
+            if (!File.Exists(_configPath))
             {
-                // Dosya yoksa varsayılan değerler zaten ayarlı, bir şey yapma.
+                // If file doesn't exist, save default settings and continue
+                SaveSettings();
                 return;
             }
 
-            var lines = File.ReadAllLines(configPath);
-            var settings = lines
+            var settings = File.ReadAllLines(_configPath)
                 .Where(line => !string.IsNullOrWhiteSpace(line) && !line.TrimStart().StartsWith("#"))
-                .Select(line => line.Split('=', 2))
+                .Select(line => line.Split(new[] { '=' }, 2))
                 .Where(parts => parts.Length == 2)
-                .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim());
+                .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
 
             if (settings.TryGetValue("username", out var usernameValue))
             {
@@ -48,6 +50,35 @@ namespace EsnafYonetim.BLL.Services
             {
                 POSCommissionRate = pos;
             }
+            if (settings.TryGetValue("theme", out var themeValue))
+            {
+                Theme = themeValue;
+            }
+        }
+
+        public void SaveSettings()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                { "username", Username },
+                { "kdv_orani", KDVRate.ToString(CultureInfo.InvariantCulture) },
+                { "pos_komisyon_orani", POSCommissionRate.ToString(CultureInfo.InvariantCulture) },
+                { "theme", Theme }
+            };
+
+            var lines = new List<string>
+            {
+                "# Esnaf Yönetim Uygulaması Ayar Dosyası",
+                "# Bu dosyayı manuel olarak düzenleyebilirsiniz.",
+                ""
+            };
+
+            foreach (var setting in settings)
+            {
+                lines.Add($"{setting.Key} = {setting.Value}");
+            }
+
+            File.WriteAllLines(_configPath, lines);
         }
     }
 }
