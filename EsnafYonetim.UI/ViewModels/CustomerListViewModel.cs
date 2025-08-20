@@ -2,32 +2,52 @@ using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
-    public partial class CustomerListViewModel : ViewModelBase
+    public class CustomerListViewModel : ViewModelBase
     {
         private readonly CustomerManager _customerManager;
+        private readonly MainWindowViewModel _mainVm;
 
         public ObservableCollection<Musteri> Customers { get; } = new();
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(EditCustomerCommand))]
         private Musteri? _selectedCustomer;
+        public Musteri? SelectedCustomer
+        {
+            get => _selectedCustomer;
+            set
+            {
+                if (SetProperty(ref _selectedCustomer, value))
+                {
+                    ((RelayCommand)EditCustomerCommand).NotifyCanExecuteChanged();
+                    ((AsyncRelayCommand)DeleteCustomerCommand).NotifyCanExecuteChanged();
+                }
+            }
+        }
 
-        // Bu event, MainWindowViewModel tarafından dinlenecek ve navigasyonu tetikleyecek.
-        public event Action<Musteri?>? AddOrEditCustomerRequested;
+        public ICommand LoadCustomersCommand { get; }
+        public ICommand AddNewCustomerCommand { get; }
+        public ICommand EditCustomerCommand { get; }
+        public ICommand DeleteCustomerCommand { get; }
 
-        public CustomerListViewModel()
+        public CustomerListViewModel(MainWindowViewModel mainVm)
         {
             _customerManager = new CustomerManager();
+            _mainVm = mainVm;
+
+            LoadCustomersCommand = new AsyncRelayCommand(LoadCustomersAsync);
+            AddNewCustomerCommand = new RelayCommand(AddNewCustomer);
+            EditCustomerCommand = new RelayCommand(EditCustomer, CanEditOrDeleteCustomer);
+            DeleteCustomerCommand = new AsyncRelayCommand(DeleteCustomer, CanEditOrDeleteCustomer);
+
             _ = LoadCustomersAsync();
         }
 
-        [RelayCommand]
         public async Task LoadCustomersAsync()
         {
             Customers.Clear();
@@ -38,20 +58,31 @@ namespace EsnafYonetim.UI.ViewModels
             }
         }
 
-        [RelayCommand]
         private void AddNewCustomer()
         {
-            // Yeni müşteri ekleme isteği. Parametre null olduğu için yeni kayıt olduğu anlaşılacak.
-            AddOrEditCustomerRequested?.Invoke(null);
+            _mainVm.Content = new CustomerAddEditView
+            {
+                DataContext = new CustomerAddEditViewModel(_mainVm, null)
+            };
         }
 
-        [RelayCommand(CanExecute = nameof(CanEditCustomer))]
         private void EditCustomer()
         {
-            // Seçili müşteriyi düzenleme isteği.
-            AddOrEditCustomerRequested?.Invoke(SelectedCustomer);
+            _mainVm.Content = new CustomerAddEditView
+            {
+                DataContext = new CustomerAddEditViewModel(_mainVm, SelectedCustomer)
+            };
         }
 
-        private bool CanEditCustomer() => SelectedCustomer != null;
+        private async Task DeleteCustomer()
+        {
+            if (SelectedCustomer != null)
+            {
+                await _customerManager.DeleteCustomerAsync(SelectedCustomer.Id);
+                Customers.Remove(SelectedCustomer);
+            }
+        }
+
+        private bool CanEditOrDeleteCustomer() => SelectedCustomer != null;
     }
 }

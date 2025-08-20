@@ -1,40 +1,49 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
     public partial class StockAddEditViewModel : ViewModelBase
     {
+        private readonly InventoryManager _inventoryManager;
+        private readonly MainWindowViewModel _mainVm;
+
         [ObservableProperty]
         private Stok _stock;
 
-        private readonly InventoryManager _inventoryManager;
         private readonly bool _isNewStock;
 
-        public event Action? OnRequestClose;
+        public string Title => _isNewStock ? "Yeni Stok Ekle" : "Stok Bilgilerini Düzenle";
 
-        public StockAddEditViewModel(Stok? stockToEdit)
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public StockAddEditViewModel(MainWindowViewModel mainVm, Stok? stockToEdit)
         {
             _inventoryManager = new InventoryManager();
+            _mainVm = mainVm;
+
             if (stockToEdit == null)
             {
-                // Yeni stok ürünü
                 _stock = new Stok { EklenmeTarihi = DateTime.Now };
                 _isNewStock = true;
             }
             else
             {
-                // Mevcut stok ürünü düzenleniyor
                 _stock = stockToEdit;
                 _isNewStock = false;
             }
+
+            SaveCommand = new AsyncRelayCommand(SaveAsync);
+            CancelCommand = new RelayCommand(Cancel);
         }
 
-        [RelayCommand]
         private async Task SaveAsync()
         {
             if (_isNewStock)
@@ -46,13 +55,12 @@ namespace EsnafYonetim.UI.ViewModels
                 await _inventoryManager.UpdateItemAsync(Stock);
             }
 
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new StockListView { DataContext = new StockListViewModel(_mainVm) };
         }
 
-        [RelayCommand]
         private void Cancel()
         {
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new StockListView { DataContext = new StockListViewModel(_mainVm) };
         }
     }
 }

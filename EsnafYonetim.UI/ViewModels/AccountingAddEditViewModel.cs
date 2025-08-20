@@ -1,55 +1,52 @@
+using EsnafYonetim.BLL.Managers;
+using EsnafYonetim.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EsnafYonetim.BLL.Managers;
-using EsnafYonetim.BLL.Services;
-using EsnafYonetim.Core.Models;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
     public partial class AccountingAddEditViewModel : ViewModelBase
     {
+        private readonly AccountingManager _accountingManager;
+        private readonly MainWindowViewModel _mainVm;
+
         [ObservableProperty]
         private Muhasebe _transaction;
 
-        private readonly AccountingManager _accountingManager;
-        private readonly SettingsService _settingsService;
-        private readonly bool _isNew;
+        private readonly bool _isNewTransaction;
 
-        public event Action? OnRequestClose;
+        public string Title => _isNewTransaction ? "Yeni İşlem Ekle" : "İşlem Bilgilerini Düzenle";
 
-        public AccountingAddEditViewModel(Muhasebe? transactionToEdit)
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public AccountingAddEditViewModel(MainWindowViewModel mainVm, Muhasebe? transactionToEdit)
         {
             _accountingManager = new AccountingManager();
-            _settingsService = new SettingsService();
-            _isNew = (transactionToEdit == null);
+            _mainVm = mainVm;
 
-            if (_isNew)
+            if (transactionToEdit == null)
             {
-                // Yeni bir işlem oluştur ve varsayılan oranlarla doldur.
-                _transaction = new Muhasebe
-                {
-                    IslemTarihi = DateTime.Now,
-                    OdemeDurumu = "Ödenmedi",
-                    OdemeTipi = "Nakit",
-                    UygulananKDVOrani = _settingsService.KDVRate,
-                    UygulananKomisyonOrani = _settingsService.POSCommissionRate
-                };
+                _transaction = new Muhasebe { IslemTarihi = DateTime.Now };
+                _isNewTransaction = true;
             }
             else
             {
-                // Mevcut bir işlemi düzenle.
-                _transaction = transactionToEdit!;
+                _transaction = transactionToEdit;
+                _isNewTransaction = false;
             }
+
+            SaveCommand = new AsyncRelayCommand(SaveAsync);
+            CancelCommand = new RelayCommand(Cancel);
         }
 
-        [RelayCommand]
         private async Task SaveAsync()
         {
-            // TODO: Doğrulama mantığı ekle.
-
-            if (_isNew)
+            if (_isNewTransaction)
             {
                 await _accountingManager.AddTransactionAsync(Transaction);
             }
@@ -58,13 +55,12 @@ namespace EsnafYonetim.UI.ViewModels
                 await _accountingManager.UpdateTransactionAsync(Transaction);
             }
 
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new AccountingView { DataContext = new AccountingViewModel(_mainVm) };
         }
 
-        [RelayCommand]
         private void Cancel()
         {
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new AccountingView { DataContext = new AccountingViewModel(_mainVm) };
         }
     }
 }

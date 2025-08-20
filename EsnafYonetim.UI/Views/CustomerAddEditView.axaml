@@ -12,26 +12,26 @@
 
             <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="15">
                 <TextBlock Text="Ad Soyad:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding Customer.AdSoyad}" Grid.Row="0" Grid.Column="1"/>
+                <TextBox Text="{Binding AdSoyad}" Grid.Row="0" Grid.Column="1"/>
 
                 <TextBlock Text="Telefon:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding Customer.Telefon}" Grid.Row="1" Grid.Column="1"/>
+                <TextBox Text="{Binding Telefon}" Grid.Row="1" Grid.Column="1"/>
 
                 <TextBlock Text="E-posta:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding Customer.Eposta}" Grid.Row="2" Grid.Column="1"/>
+                <TextBox Text="{Binding Eposta}" Grid.Row="2" Grid.Column="1"/>
 
                 <TextBlock Text="Durum:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                <ComboBox SelectedItem="{Binding Customer.Status}" Grid.Row="3" Grid.Column="1">
+                <ComboBox SelectedItem="{Binding Status}" Grid.Row="3" Grid.Column="1">
                     <ComboBoxItem>active</ComboBoxItem>
                     <ComboBoxItem>archived</ComboBoxItem>
                     <ComboBoxItem>deleted</ComboBoxItem>
                 </ComboBox>
 
                 <TextBlock Text="Adres:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Top"/>
-                <TextBox Text="{Binding Customer.Adres}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="4" Grid.Column="1"/>
+                <TextBox Text="{Binding Adres}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="4" Grid.Column="1"/>
 
                 <TextBlock Text="Notlar:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Top"/>
-                <TextBox Text="{Binding Customer.Notlar}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="5" Grid.Column="1"/>
+                <TextBox Text="{Binding Notlar}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Grid.Row="5" Grid.Column="1"/>
             </Grid>
 
             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,25,0,0">

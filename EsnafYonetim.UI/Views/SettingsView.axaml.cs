@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using EsnafYonetim.UI.ViewModels;
 
 namespace EsnafYonetim.UI.Views
 {
@@ -7,6 +8,7 @@ namespace EsnafYonetim.UI.Views
         public SettingsView()
         {
             InitializeComponent();
+            DataContext = new SettingsViewModel();
         }
     }
 }

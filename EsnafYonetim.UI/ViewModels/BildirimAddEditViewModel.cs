@@ -1,94 +1,69 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
     public partial class BildirimAddEditViewModel : ViewModelBase
     {
-        [ObservableProperty]
-        private Bildirim _bildirim;
-
         private readonly BildirimManager _bildirimManager;
-        private readonly bool _isNew;
-
-        public ObservableCollection<BildirimTipi> BildirimTipleri { get; }
-        public ObservableCollection<KarsilastirmaOperatoru> Operatorler { get; }
+        private readonly MainWindowViewModel _mainVm;
 
         [ObservableProperty]
-        private bool _isZamanlanmisVisible;
+        private Bildirim _notification;
 
-        [ObservableProperty]
-        private bool _isStokSeviyesiVisible;
+        private readonly bool _isNewNotification;
 
-        public event Action? OnRequestClose;
+        public string Title => _isNewNotification ? "Yeni Bildirim Ekle" : "Bildirim Bilgilerini Düzenle";
 
-        public BildirimTipi Tip
-        {
-            get => Bildirim.Tip;
-            set
-            {
-                if (SetProperty(Bildirim.Tip, value, Bildirim, (b, v) => b.Tip = v))
-                {
-                    UpdateVisibility();
-                }
-            }
-        }
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
 
-        public BildirimAddEditViewModel(Bildirim? bildirimToEdit)
+        public BildirimAddEditViewModel(MainWindowViewModel mainVm, Bildirim? notificationToEdit)
         {
             _bildirimManager = new BildirimManager();
-            _isNew = (bildirimToEdit == null);
+            _mainVm = mainVm;
 
-            BildirimTipleri = new ObservableCollection<BildirimTipi>(Enum.GetValues<BildirimTipi>());
-            Operatorler = new ObservableCollection<KarsilastirmaOperatoru>(Enum.GetValues<KarsilastirmaOperatoru>());
-
-            if (_isNew)
+            if (notificationToEdit == null)
             {
-                _bildirim = new Bildirim { OlusturmaTarihi = DateTime.Now, Aktif = true, Tip = BildirimTipi.Zamanlanmis };
+                // Corrected properties based on Bildirim.cs
+                _notification = new Bildirim { TetiklenmeZamani = DateTime.Now, Aktif = true, Mesaj = "" };
+                _isNewNotification = true;
             }
             else
             {
-                _bildirim = bildirimToEdit!;
+                _notification = notificationToEdit;
+                _isNewNotification = false;
             }
-            UpdateVisibility();
+
+            SaveCommand = new AsyncRelayCommand(SaveAsync);
+            CancelCommand = new RelayCommand(Cancel);
         }
 
-        private void UpdateVisibility()
-        {
-            IsZamanlanmisVisible = Tip == BildirimTipi.Zamanlanmis;
-            IsStokSeviyesiVisible = Tip == BildirimTipi.StokSeviyesi;
-        }
-
-        [RelayCommand]
         private async Task SaveAsync()
         {
-            if (_isNew)
+            if (_isNewNotification)
             {
-                await _bildirimManager.AddAsync(Bildirim);
+                // Corrected method name
+                await _bildirimManager.AddAsync(Notification);
             }
             else
             {
-                await _bildirimManager.UpdateAsync(Bildirim);
+                // Corrected method name
+                await _bildirimManager.UpdateAsync(Notification);
             }
-            OnRequestClose?.Invoke();
+
+            _mainVm.Content = new BildirimlerView { DataContext = new BildirimlerViewModel(_mainVm) };
         }
 
-        [RelayCommand]
         private void Cancel()
         {
-            OnRequestClose?.Invoke();
-        }
-
-        [RelayCommand]
-        private void BrowseSoundFile()
-        {
-            // TODO: Avalonia's OpenFileDialog'u kullanarak ses dosyası seçme mantığı eklenecek.
+            _mainVm.Content = new BildirimlerView { DataContext = new BildirimlerViewModel(_mainVm) };
         }
     }
 }

@@ -2,31 +2,52 @@ using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
-    public partial class StockListViewModel : ViewModelBase
+    public class StockListViewModel : ViewModelBase
     {
         private readonly InventoryManager _inventoryManager;
+        private readonly MainWindowViewModel _mainVm;
 
         public ObservableCollection<Stok> Stocks { get; } = new();
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(EditStockCommand))]
         private Stok? _selectedStock;
+        public Stok? SelectedStock
+        {
+            get => _selectedStock;
+            set
+            {
+                if (SetProperty(ref _selectedStock, value))
+                {
+                    ((RelayCommand)EditStockCommand).NotifyCanExecuteChanged();
+                    ((AsyncRelayCommand)DeleteStockCommand).NotifyCanExecuteChanged();
+                }
+            }
+        }
 
-        public event Action<Stok?>? AddOrEditStockRequested;
+        public ICommand LoadStocksCommand { get; }
+        public ICommand AddNewStockCommand { get; }
+        public ICommand EditStockCommand { get; }
+        public ICommand DeleteStockCommand { get; }
 
-        public StockListViewModel()
+        public StockListViewModel(MainWindowViewModel mainVm)
         {
             _inventoryManager = new InventoryManager();
+            _mainVm = mainVm;
+
+            LoadStocksCommand = new AsyncRelayCommand(LoadStocksAsync);
+            AddNewStockCommand = new RelayCommand(AddNewStock);
+            EditStockCommand = new RelayCommand(EditStock, CanEditOrDeleteStock);
+            DeleteStockCommand = new AsyncRelayCommand(DeleteStock, CanEditOrDeleteStock);
+
             _ = LoadStocksAsync();
         }
 
-        [RelayCommand]
         public async Task LoadStocksAsync()
         {
             Stocks.Clear();
@@ -37,18 +58,31 @@ namespace EsnafYonetim.UI.ViewModels
             }
         }
 
-        [RelayCommand]
         private void AddNewStock()
         {
-            AddOrEditStockRequested?.Invoke(null);
+            _mainVm.Content = new StockAddEditView
+            {
+                DataContext = new StockAddEditViewModel(_mainVm, null)
+            };
         }
 
-        [RelayCommand(CanExecute = nameof(CanEditStock))]
         private void EditStock()
         {
-            AddOrEditStockRequested?.Invoke(SelectedStock);
+            _mainVm.Content = new StockAddEditView
+            {
+                DataContext = new StockAddEditViewModel(_mainVm, SelectedStock)
+            };
         }
 
-        private bool CanEditStock() => SelectedStock != null;
+        private async Task DeleteStock()
+        {
+            if (SelectedStock != null)
+            {
+                await _inventoryManager.DeleteItemAsync(SelectedStock.Id);
+                Stocks.Remove(SelectedStock);
+            }
+        }
+
+        private bool CanEditOrDeleteStock() => SelectedStock != null;
     }
 }

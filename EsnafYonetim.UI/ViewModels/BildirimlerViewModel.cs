@@ -1,47 +1,88 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
-using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
-    public partial class BildirimlerViewModel : ViewModelBase
+    public class BildirimlerViewModel : ViewModelBase
     {
         private readonly BildirimManager _bildirimManager;
+        private readonly MainWindowViewModel _mainVm;
 
         public ObservableCollection<Bildirim> Notifications { get; } = new();
 
-        [ObservableProperty]
         private Bildirim? _selectedNotification;
+        public Bildirim? SelectedNotification
+        {
+            get => _selectedNotification;
+            set
+            {
+                if (SetProperty(ref _selectedNotification, value))
+                {
+                    ((RelayCommand)EditNotificationCommand).NotifyCanExecuteChanged();
+                    ((AsyncRelayCommand)DeleteNotificationCommand).NotifyCanExecuteChanged();
+                }
+            }
+        }
 
-        public event Action<Bildirim?>? AddOrEditNotificationRequested;
+        public ICommand LoadNotificationsCommand { get; }
+        public ICommand AddNewNotificationCommand { get; }
+        public ICommand EditNotificationCommand { get; }
+        public ICommand DeleteNotificationCommand { get; }
 
-        public BildirimlerViewModel()
+        public BildirimlerViewModel(MainWindowViewModel mainVm)
         {
             _bildirimManager = new BildirimManager();
+            _mainVm = mainVm;
+
+            LoadNotificationsCommand = new AsyncRelayCommand(LoadNotificationsAsync);
+            AddNewNotificationCommand = new RelayCommand(AddNewNotification);
+            EditNotificationCommand = new RelayCommand(EditNotification, CanEditOrDeleteNotification);
+            DeleteNotificationCommand = new AsyncRelayCommand(DeleteNotification, CanEditOrDeleteNotification);
+
             _ = LoadNotificationsAsync();
         }
 
-        [RelayCommand]
         public async Task LoadNotificationsAsync()
         {
             Notifications.Clear();
-            var notifications = await _bildirimManager.GetAllAsync();
-            foreach (var notification in notifications)
+            var notificationsFromDb = await _bildirimManager.GetAllAsync();
+            foreach (var notification in notificationsFromDb)
             {
                 Notifications.Add(notification);
             }
         }
 
-        [RelayCommand]
         private void AddNewNotification()
         {
-            AddOrEditNotificationRequested?.Invoke(null);
+            _mainVm.Content = new BildirimAddEditView
+            {
+                DataContext = new BildirimAddEditViewModel(_mainVm, null)
+            };
         }
 
-        // TODO: Add Edit and Delete commands
+        private void EditNotification()
+        {
+            _mainVm.Content = new BildirimAddEditView
+            {
+                DataContext = new BildirimAddEditViewModel(_mainVm, SelectedNotification)
+            };
+        }
+
+        private async Task DeleteNotification()
+        {
+            if (SelectedNotification != null)
+            {
+                await _bildirimManager.DeleteAsync(SelectedNotification.Id);
+                Notifications.Remove(SelectedNotification);
+            }
+        }
+
+        private bool CanEditOrDeleteNotification() => SelectedNotification != null;
     }
 }

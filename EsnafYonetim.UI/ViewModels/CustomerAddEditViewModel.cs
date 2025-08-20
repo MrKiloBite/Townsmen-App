@@ -1,62 +1,83 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using EsnafYonetim.BLL.Managers;
 using EsnafYonetim.Core.Models;
-using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EsnafYonetim.UI.Views;
 
 namespace EsnafYonetim.UI.ViewModels
 {
     public partial class CustomerAddEditViewModel : ViewModelBase
     {
-        [ObservableProperty]
-        private Musteri _customer;
-
         private readonly CustomerManager _customerManager;
-        private readonly bool _isNewCustomer;
+        private readonly MainWindowViewModel _mainVm;
+        private readonly Musteri _customer;
+        private bool _isNewCustomer;
 
-        // This event can be used to signal that the view should be closed.
-        public event Action? OnRequestClose;
+        [ObservableProperty] private string? _adSoyad;
+        [ObservableProperty] private string? _telefon;
+        [ObservableProperty] private string? _eposta;
+        [ObservableProperty] private string? _adres;
+        [ObservableProperty] private string? _notlar;
+        [ObservableProperty] private string _status;
 
-        public CustomerAddEditViewModel(Musteri? customerToEdit)
+        public string Title => _isNewCustomer ? "Yeni Müşteri Ekle" : "Müşteri Bilgilerini Düzenle";
+
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public CustomerAddEditViewModel(MainWindowViewModel mainVm, Musteri? customer)
         {
             _customerManager = new CustomerManager();
-            if (customerToEdit == null)
+            _mainVm = mainVm;
+
+            if (customer == null)
             {
-                // Yeni bir müşteri oluşturuluyor.
-                _customer = new Musteri { OlusturmaTarihi = DateTime.Now, Status = "active" };
+                _customer = new Musteri();
                 _isNewCustomer = true;
+                _status = "active"; // Default status
             }
             else
             {
-                // Mevcut bir müşteri düzenleniyor.
-                _customer = customerToEdit;
+                _customer = customer;
                 _isNewCustomer = false;
+                _adSoyad = _customer.AdSoyad;
+                _telefon = _customer.Telefon;
+                _eposta = _customer.Eposta;
+                _adres = _customer.Adres;
+                _notlar = _customer.Notlar;
+                _status = _customer.Status;
             }
+
+            SaveCommand = new AsyncRelayCommand(SaveAsync);
+            CancelCommand = new RelayCommand(Cancel);
         }
 
-        [RelayCommand]
         private async Task SaveAsync()
         {
-            // TODO: Add validation logic here.
+            _customer.AdSoyad = AdSoyad;
+            _customer.Telefon = Telefon;
+            _customer.Eposta = Eposta;
+            _customer.Adres = Adres;
+            _customer.Notlar = Notlar;
+            _customer.Status = Status;
 
             if (_isNewCustomer)
             {
-                await _customerManager.AddCustomerAsync(Customer);
+                await _customerManager.AddCustomerAsync(_customer);
             }
             else
             {
-                await _customerManager.UpdateCustomerAsync(Customer);
+                await _customerManager.UpdateCustomerAsync(_customer);
             }
 
-            // İşlem tamamlandıktan sonra görünümü kapatmak için bir event tetikle.
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new CustomerListView { DataContext = new CustomerListViewModel(_mainVm) };
         }
 
-        [RelayCommand]
         private void Cancel()
         {
-            OnRequestClose?.Invoke();
+            _mainVm.Content = new CustomerListView { DataContext = new CustomerListViewModel(_mainVm) };
         }
     }
 }
